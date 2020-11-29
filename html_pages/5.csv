@@ -1,0 +1,37 @@
+station_name,borough,entrance,lines
+Eastchester - Dyre Av,The Bronx,3812 Dyre Avenue,5
+Baychester Av,The Bronx,3355 Edson Avenue,5
+Gun Hill Rd,The Bronx,2812 Sexton Place,5
+Pelham Pkwy,The Bronx,Esplanade,5
+Morris Park,The Bronx,2122 Bogart Avenue,5
+E 180th,,,tree
+West Farms Sq - E Tremont Av,The Bronx,1055 E Tremont Ave,"2,5"
+East 174 Street Station Subway,The Bronx,920 E 174 St,2)/(5
+Freeman St,The Bronx,Freeman Street,"2,5"
+Simpson St,The Bronx,1027 Westchester Ave,"2,5"
+Intervale Av,The Bronx,941 Westchester Ave,"2,5"
+Prospect Av,The Bronx,839 Westchester Ave,"2,5"
+Jackson Av,,,"2,5"
+3 Av - 149 St,The Bronx,399 E 149 St,"2,5"
+149 St - Grand Concourse,The Bronx,500 Grand Conc,"2,4,5"
+138 St - Grand Concourse,The Bronx,250 Grand Conc,"4,5"
+125 St,Manhattan,2060 Lexington Ave,"4,5,6x,6"
+86 St,Manhattan,1280 Lexington Avenue,"4,5,6x,6"
+Lexington Av / 59 St,Manhattan,743 Lexington Avenue,"F,N,Q,R,4,5,6"
+Grand Central - 42 St,Manhattan,107 E 42 St,"4,5,6x,6,7,7x,S"
+Union Sq - 14 St,Manhattan,East 14th Street,"4,5,6,6x,L,N,Q,R,W"
+Brooklyn Bridge - Chambers St,Manhattan,1 Centre St,"J,Z,4,5,6"
+Fulton St,Manhattan,139 Fulton St,"A,C,N,R,W,J,Z,2,3,4,5"
+Wall St,Manhattan,80 Broadway,"4,5"
+Bowling Green,Manhattan,1 Broadway,"4,5"
+Borough Hall,Brooklyn,Joralemon Street,"2,3,4,5,N,R,W"
+Nevins St,Brooklyn,1 Flatbush Avenue,"2,3,4,5"
+Atlantic Av - Barclays Ctr,Brooklyn,590 Atlantic Ave,"B,D,N,Q,R,2,3,4,5"
+Franklin Av,Brooklyn,806 Franklin Avenue,"S,2,3,4,5"
+President St,Brooklyn,880 Nostrand Ave,"2,5"
+Sterling St,Brooklyn,1046 Nostrand Ave,"2,5"
+Winthrop St,Brooklyn,1250 Nostrand Ave,"2,5"
+Church Av,Brooklyn,1451 Nostrand Ave,"2,5"
+Beverly Rd,Brooklyn,1678 Nostrand Ave,"2,5"
+Newkirk Av,Brooklyn,2923 Newkirk Avenue,"2,5"
+Flatbush Av - Brooklyn College,Brooklyn,2135 Nostrand Avenue;Flatbush Avenue,"2,5"

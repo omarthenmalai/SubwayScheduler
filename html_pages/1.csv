@@ -1,0 +1,39 @@
+station_name,borough,entrance,lines
+South Ferry Loop,Manhattan,Peter Minuit Plaza,"1,N,R,W"
+Rector St,Manhattan,69 Greenwich Street,1
+Wtc - Cortlandt,Manhattan,19 Church Street,1
+Chambers St,Manhattan,Chambers Street,"1,2,3"
+Franklin St,Manhattan,1 Varick St,"1,2"
+Canal St,Manhattan,1 Hudson Sq,"1,2"
+Houston St,Manhattan,200 Varick Street,"1,2"
+Christopher St - Sheridan Sq,Manhattan,7th Avenue South,"1,2"
+14 St,Manhattan,37 7th Avenue,"1,2,3"
+18 St,Manhattan,127 7th Avenue,"1,2"
+23 St,Manhattan,7th Avenue,"1,2"
+28 St,Manhattan,7 Avenue,"1,2"
+34 St - Penn Station,Manhattan,421 7th Avenue,"1,2,3"
+Times Sq - 42 St,Manhattan,7 West 42nd Street,"N,Q,R,S,1,2,3,7,7x"
+50 St Subway Station,Manhattan,1638 Broadway,"1,2"
+59 St - Columbus Circle,Manhattan,Columbus Circle,"A,B,C,D,1"
+66 St - Lincoln Center,Manhattan,Broadway,"1,2"
+72 St,Manhattan,2073 Broadway,"1,2,3"
+79 St,Manhattan,West 79th Street,"1,2"
+86 St,Manhattan,2379 Broadway,"1,2"
+96 St,Manhattan,250 West 95th Street,"1,2,3"
+103 St,Manhattan,2709 Broadway,1
+Cathedral Pkwy,Manhattan,2833 Broadway,1
+116 St - Columbia University,Manhattan,2953 Broadway,1
+125 St,Manhattan,West 125th Street,1
+137 St - City College,Manhattan,West 138th Street,1
+145 St,Manhattan,3545 Broadway,1
+157 St,Manhattan,3778 Broadway,1
+168 St,Manhattan,West 168th Street,"A,C,1"
+181 St,Manhattan,1421 St Nicholas Ave,1
+191 St,Manhattan,1606 St Nicholas Ave,1
+Dyckman St,Manhattan,Hillside Avenue,1
+207 St,Manhattan,3876 10 Ave,1
+215 St,Manhattan,500 West 215th Street,1
+Marble Hill - 225 St,Manhattan,5203 Broadway,1
+231 St,The Bronx,5572 Broadway,1
+238 St,The Bronx,Broadway,1
+Van Cortlandt Park - 242 St,The Bronx,5959 Broadway,1

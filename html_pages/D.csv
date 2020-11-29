@@ -1,0 +1,42 @@
+station_name,borough,entrance,lines
+Coney Island - Stillwell Av,Brooklyn,2859 Stillwell Ave,"D,F,N,Q"
+Bay 50 St,Brooklyn,2400 Stillwell Ave,D
+25 Av,Brooklyn,86th Street,D
+Bay Pkwy,Brooklyn,2202 86th Street,D
+20 Av,Brooklyn,2004 86 St,D
+18 Av,Brooklyn,8439 New Utrecht Ave,D
+79 St,Brooklyn,7724 New Utrecht Ave,D
+71 St,Brooklyn,6919 New Utrecht Avenue,D
+62 St,Brooklyn,6124 New Utrecht Avenue,"D,N,W"
+55 St,Brooklyn,5501 13th Avenue,D
+50 St,Brooklyn,4914 New Utrecht Ave,D
+Fort Hamilton Pkwy,Brooklyn,4402 New Utrecht Ave,D
+9 Av,Brooklyn,3801 9 Ave,D
+36 St,Brooklyn,926 4 Ave,"D,N,R"
+25 St,Brooklyn,751 4th Avenue,"D,N,R"
+Prospect Av,Brooklyn,591 4 Ave,"D,N,R"
+4 Av - 9 St,Brooklyn,250 9th Street,"D,F,N,R,G"
+Union St,Brooklyn,215 4 Ave,"D,N,R"
+Atlantic Av - Barclays Ctr,Brooklyn,590 Atlantic Ave,"B,D,N,Q,R,2,3,4,5"
+Dekalb Av,Brooklyn,340 Flatbush Ave Extension,"B,D,N,Q,R"
+Grand St,Manhattan,105 Chrystie St,"B,D"
+Broadway-Lafayette St,Manhattan,606 Broadway,"B,D,F,M,4,6"
+W 4 St,Manhattan,West 4th Street,"A,B,C,D,E,F,M"
+34 St - Herald Sq,Manhattan,Avenue of the Americas,"B,D,F,M,N,Q,R"
+42 St - Bryant Pk,Manhattan,Avenue of the Americas,"B,D,F,M"
+47-50 Sts - Rockefeller Ctr,Manhattan,69 West 48th Street,"B,D,F,M"
+7 Av,Manhattan,811 7th Avenue,"B,D,E"
+59 St - Columbus Circle,Manhattan,Columbus Circle,"A,B,C,D,1"
+125 St,Manhattan,310 Saint Nicholas Avenue,"A,B,C,D"
+145 St,Manhattan,716 St Nicholas Ave,"A,B,C,D"
+155 St,,,"B,D"
+161 St - Yankee Stadium,The Bronx,River Avenue,"B,D,4"
+167 St,The Bronx,1181 Grand Conc,"B,D"
+170 St,The Bronx,1421 Grand Concourse,"B,D"
+174-175 Sts,The Bronx,1750 Grand Conc,"B,D"
+Tremont Av,The Bronx,1940 Grand Conc,"B,D"
+182-183 Sts,The Bronx,2233 Grand Concourse,"B,D"
+Fordham Rd,The Bronx,2458 Grand Conc,"B,D"
+Kingsbridge Rd,The Bronx,Grand Concourse,"B,D"
+Bedford Park Blvd,The Bronx,3010 Grand Conc,"B,D"
+Norwood - 205 St,The Bronx,302 E 206 St,D
