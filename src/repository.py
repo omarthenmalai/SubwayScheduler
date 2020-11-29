@@ -26,7 +26,7 @@ class MapRepository:
         """
         result = tx.run(
             '''
-                    CREATE (s:SubwayStation{
+                    MERGE (s:SubwayStation{
                         station_name: $station_name,
                         borough: $borough, 
                         entrances: $entrances, 
