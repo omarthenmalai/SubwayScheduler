@@ -2,6 +2,7 @@ from __future__ import annotations
 from sqlalchemy import create_engine, Integer, Float, String, Column, ForeignKey, PrimaryKeyConstraint, func, text, desc
 from sqlalchemy.ext.declarative import declarative_base
 from neo4j.graph import Node
+import numpy as np
 
 Base = declarative_base()
 
@@ -111,6 +112,33 @@ class SubwayStation:
             entrances=node['entrances'],
             lines=node['lines'],
             status=node['status']
+        )
+
+    @classmethod
+    def from_csv_row(cls, row: list) -> SubwayStation:
+        lines = row['lines']
+        if len(lines) > 1:
+            lines = sorted([line.upper() for line in lines.split(',')])
+        else:
+            lines = [lines.upper()]
+
+        borough = row['borough']
+        if row['borough'] == np.nan:
+            borough = 'No Borough Found'
+
+        entrance = row['entrance']
+        if row['entrance'] == np.nan:
+            entrance = 'No Entrance Found'
+
+        if row['station_name'] == "Junius St":
+            print(row)
+
+        return cls(
+            station_name=row['station_name'],
+            borough=borough,
+            entrances=entrance,
+            lines=lines,
+            status='Normal'
         )
 
     def __eq__(self, other: SubwayStation) -> bool:
