@@ -6,96 +6,125 @@ import os
 # Local imports
 from src.models import SubwayStation, TrainLine
 from src.service import MapService
-from src.station_scraper import VALID_LINES
 
-
-
-
-
+"""
+Lexington Av/63rd St == Lexington Av/59th St
+Lexington Av/53rd St == 51 St
+Broadway-Lafayette St == Bleecker St
+"""
 
 def init_db():
-    # print(os.getcwd())
 
-    # Dataframe of subway stations
-    subway_stations = pd.read_csv("data/subway_stations.csv")
-
-    # Collate stations with the same names
-    collated_stations = collate_stations(subway_stations)
-
-    # Initialize MapService to add nodes and edges
+    # Initialize MapService to add the SubwayStations and CONNECTS relationships
     map_service = MapService()
 
+    total_nodes = 0
+    total_relationships = 0
 
-    collated_stations.to_csv('test.csv', index=False)
-    # Create a node for each station with the station name, entrances, and lines
-    for index, row in collated_stations.iterrows():
-        lines = row['Lines'].split(',')
-        lines = [x for x in lines if x != '']
-        subway_station = SubwayStation(station_name=row['Station'],
-                                       borough=row['Borough'],
-                                       entrances=row['Entrances'],
-                                       lines=lines,
-                                       status="Normal")
-        map_service.create_station(subway_station)
-
-
-    # Create the edges for each line between the relevant stations
-    # csvs = os.listdir('data')
-    # csvs = [x for x in csvs if len(x) == 5]
-    # csvs = csvs[1:]
-    # csvs = ['2.csv', '3.csv', '4.csv', '6.csv']
-    csvs = VALID_LINES
+    directory = "data"
+    csvs = ['{}/{}'.format(directory, csv) for csv in os.listdir(directory)]
     for csv in csvs:
-        line = pd.read_csv('data/' + csv + '.csv')
-        for i in range(0, len(line)-1):
+        line = csv.split('/')[1].split('.')[0]
 
-            # Create the SubwayStation for the start of the connection
-            start_name = line.loc[i, 'Station']
-            start_entrances = line.loc[i, 'Entrances']
-            start = SubwayStation(station_name=start_name,
-                                  borough=line.loc[i, 'Borough'],
-                                  entrances=start_entrances,
-                                  lines=line.loc[i, 'Lines'])
+        df = pd.read_csv(csv)
+        df.fillna('Not Found', inplace=True)
 
-            # Create the SubwayStation for the local stop connection
-            local_stop_name = line.loc[i+1, 'Station']
-            local_stop_entrances = line.loc[i+1, 'Entrances']
-            local_stop = SubwayStation(station_name=local_stop_name,
-                                       borough=line.loc[i+1, 'Borough'],
-                                       entrances=local_stop_entrances,
-                                       lines=line.loc[i, 'Lines'])
-
-            # Line that will be used for the connection
-            primary_line = str(line.loc[i, 'Primary Line'])
-
-
-            # Create the TrainLine that represents the connections between the two stations
-            train_line = TrainLine(start=start, stop=local_stop, line=primary_line)
-            result = map_service.create_connection(train_line)
-            if result is None:
-                pass
-            if line.loc[i, 'Express']:
-                for j in range(i+1, len(line)):
-                    if line.loc[j, 'Express']:
-
-                        # Name and Entrances for the express stop
-                        express_stop_name = line.loc[j, 'Station']
-                        express_stop_entrances = line.loc[j, 'Entrances']
-
-                        # Add 'Express' to the line name
-                        primary_line += ' Express'
-
-                        # Change the line and the stop of the TrainLine object
-                        train_line.line = primary_line
-                        train_line.stop = SubwayStation(station_name=express_stop_name,
-                                                        borough=line.loc[j, 'Borough'],
-                                                        entrances=express_stop_entrances)
-
-                        # Create the connection between the start and the express_stop
-                        map_service.create_connection(train_line)
-                        break
-
-    return None
+        for index in range(0, len(df)):
+            row = df.loc[index]
+            subway_station = SubwayStation.from_csv_row(row)
+            station_res = map_service.create_station(subway_station)
+            if index > 0:
+                prev_row = df.loc[index-1]
+                prev_subway_station = SubwayStation.from_csv_row(prev_row)
+                train_line = TrainLine(start=prev_subway_station, stop=subway_station, line=line)
+                train_line_res = map_service.create_connection(train_line)
+                total_relationships += 1
+            total_nodes += 1
+    print(total_nodes)
+    print(total_relationships)
+# def init_db():
+#     # print(os.getcwd())
+#
+#     # Dataframe of subway stations
+#     subway_stations = pd.read_csv("data/subway_stations.csv")
+#
+#     # Collate stations with the same names
+#     collated_stations = collate_stations(subway_stations)
+#
+#     # Initialize MapService to add nodes and edges
+#     map_service = MapService()
+#
+#
+#     collated_stations.to_csv('test.csv', index=False)
+#     # Create a node for each station with the station name, entrances, and lines
+#     for index, row in collated_stations.iterrows():
+#         lines = row['Lines'].split(',')
+#         lines = [x for x in lines if x != '']
+#         subway_station = SubwayStation(station_name=row['Station'],
+#                                        borough=row['Borough'],
+#                                        entrances=row['Entrances'],
+#                                        lines=lines,
+#                                        status="Normal")
+#         map_service.create_station(subway_station)
+#
+#
+#     # Create the edges for each line between the relevant stations
+#     # csvs = os.listdir('data')
+#     # csvs = [x for x in csvs if len(x) == 5]
+#     # csvs = csvs[1:]
+#     # csvs = ['2.csv', '3.csv', '4.csv', '6.csv']
+#     csvs = VALID_LINES
+#     for csv in csvs:
+#         line = pd.read_csv('data/' + csv + '.csv')
+#         for i in range(0, len(line)-1):
+#
+#             # Create the SubwayStation for the start of the connection
+#             start_name = line.loc[i, 'Station']
+#             start_entrances = line.loc[i, 'Entrances']
+#             start = SubwayStation(station_name=start_name,
+#                                   borough=line.loc[i, 'Borough'],
+#                                   entrances=start_entrances,
+#                                   lines=line.loc[i, 'Lines'])
+#
+#             # Create the SubwayStation for the local stop connection
+#             local_stop_name = line.loc[i+1, 'Station']
+#             local_stop_entrances = line.loc[i+1, 'Entrances']
+#             local_stop = SubwayStation(station_name=local_stop_name,
+#                                        borough=line.loc[i+1, 'Borough'],
+#                                        entrances=local_stop_entrances,
+#                                        lines=line.loc[i, 'Lines'])
+#
+#             # Line that will be used for the connection
+#             primary_line = str(line.loc[i, 'Primary Line'])
+#
+#
+#             # Create the TrainLine that represents the connections between the two stations
+#             train_line = TrainLine(start=start, stop=local_stop, line=primary_line)
+#             result = map_service.create_connection(train_line)
+#             if result is None:
+#                 pass
+#             if line.loc[i, 'Express']:
+#                 for j in range(i+1, len(line)):
+#                     if line.loc[j, 'Express']:
+#
+#                         # Name and Entrances for the express stop
+#                         express_stop_name = line.loc[j, 'Station']
+#                         express_stop_entrances = line.loc[j, 'Entrances']
+#
+#                         # Add 'Express' to the line name
+#                         primary_line += ' Express'
+#
+#                         # Change the line and the stop of the TrainLine object
+#                         train_line.line = primary_line
+#                         train_line.stop = SubwayStation(station_name=express_stop_name,
+#                                                         borough=line.loc[j, 'Borough'],
+#                                                         entrances=express_stop_entrances)
+#
+#                         # Create the connection between the start and the express_stop
+#                         map_service.create_connection(train_line)
+#                         break
+#
+#     return None
 
 
 
