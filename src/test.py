@@ -2,6 +2,7 @@ from src.models import SubwayStation, TrainLine
 from src.service import MapService
 from src.repository import MapRepository
 from src.database import init_db
+import timeit
 
 # Fully Mapped:
 # 1
@@ -20,25 +21,15 @@ from src.database import init_db
 MapRepository.clear_db()
 init_db()
 
-
 map_service = MapService()
 map_repository = MapRepository()
+reroute = map_service.get_station_by_station_name("Grand Central 42 St")
+start = map_service.get_station_by_station_name("14 St-Union Sq")
+stop = map_service.get_station_by_station_name("Woodlawn")
 
-start = SubwayStation("170 St",
-                      '''
-                      Utica Ave and Eastern Parkway, Schenectady Ave and Eastern Parkway
-                      ''',
-                      None)
-stop = SubwayStation('176 St',
-                     '''
-                     Jerome Ave and Burnside Ave
-                     ''',
-                     None)
+map_service.set_station_status_out_of_order(reroute)
 
-stat = SubwayStation(station_name="Grand Central 42 St")
-stat2 = SubwayStation(station_name="14 St-Union Sq")
 
-map_service.set_station_status_out_of_order(stat)
-# map_service.set_station_status_normal(stat)
-map_service.set_station_status_out_of_order(stat2)
+res = map_service.get_shortest_path(start, stop)
+print(res)
 

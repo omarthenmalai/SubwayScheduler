@@ -1,6 +1,8 @@
+from __future__ import annotations
 from sqlalchemy import create_engine, Integer, Float, String, Column, ForeignKey, PrimaryKeyConstraint, func, text, desc
 from sqlalchemy.ext.declarative import declarative_base
-
+from neo4j.graph import Node
+import numpy as np
 
 Base = declarative_base()
 
@@ -8,7 +10,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
 
-    user_id = Column(Integer, primary_key=True) # User ID
+    user_id = Column(Integer, primary_key=True)  # User ID
     email = Column(String(50))
     password = Column(String(128))
 
@@ -19,7 +21,7 @@ class User(Base):
 class Administrator(Base):
     __tablename__ = 'administrators'
 
-    admin_id = Column(Integer, primary_key=True) # User ID
+    admin_id = Column(Integer, primary_key=True)  # User ID
     email = Column(String(50))
     password = Column(String(128))
 
@@ -31,11 +33,18 @@ class SubwayStation:
     '''
     Nodes on the graph
     '''
-    def __init__(self, station_name=None, entrances=None, lines=None, status=None):
+
+    def __init__(self,
+                 station_name: str = None,
+                 borough: str = None,
+                 entrances: str = None,
+                 lines: list = None,
+                 status: str = None) -> SubwayStation:
         self._station_name = station_name
         self._entrances = entrances
         self._lines = lines
-        self._status = status # "Normal" or "Out of Order"
+        self._status = status  # "Normal" or "Out of Order"
+        self._borough = borough
 
     @property
     def station_name(self):
@@ -47,11 +56,20 @@ class SubwayStation:
         return self
 
     @property
+    def borough(self):
+        return self._borough
+
+    @borough.setter
+    def borough(self, value: str):
+        self._borough = value
+        return self
+
+    @property
     def entrances(self):
         return self._entrances
 
     @entrances.setter
-    def entrances(self, value):
+    def entrances(self, value: str):
         self._entrances = value
         return self
 
@@ -81,15 +99,82 @@ class SubwayStation:
         self._lines = [x for x in self._lines if x != line]
         return self
 
+    @classmethod
+    def from_node(cls, node: Node) -> SubwayStation:
+        '''
+        Creates a SubwayStation object from a Neo4j Node object
+        :param node: a Neo4j Node object
+        :return: A SubwayStation object with properties equal to the property of the node
+        '''
+        return cls(
+            station_name=node['station_name'],
+            borough=node['borough'],
+            entrances=node['entrances'],
+            lines=node['lines'],
+            status=node['status']
+        )
 
+    @classmethod
+    def from_csv_row(cls, row: list) -> SubwayStation:
+        lines = row['lines']
+        if len(lines) > 1:
+            lines = sorted([line.upper() for line in lines.split(',')])
+        else:
+            lines = [lines.upper()]
 
+        borough = row['borough']
+        if row['borough'] == np.nan:
+            borough = 'No Borough Found'
+
+        entrance = row['entrance']
+        if row['entrance'] == np.nan:
+            entrance = 'No Entrance Found'
+
+        if row['station_name'] == "Junius St":
+            print(row)
+
+        return cls(
+            station_name=row['station_name'],
+            borough=borough,
+            entrances=entrance,
+            lines=lines,
+            status='Normal'
+        )
+
+    def __eq__(self, other: SubwayStation) -> bool:
+        '''
+        Overload == operator
+        :param other: the thing being compared
+        :return: True if equal, False otherwise
+        '''
+        if (self.station_name == other.station_name
+                and self.borough == other.borough
+                and self.entrances == other.entrances
+                and self.lines == other.lines):
+            return True
+        else:
+            return False
+
+    def __repr__(self):
+        return "<SubwayStation(station_name={0}, borough={1}, entrances={2}, lines={3}, status={4})>" \
+            .format(self.station_name, self.borough, self.entrances, self.lines, self.status)
 
 
 class TrainLine:
     '''
     Edges on the graph
     '''
-    def __init__(self, start, stop, line):
+
+    def __init__(self,
+                 start: SubwayStation = None,
+                 stop: SubwayStation = None,
+                 line: str = None) -> TrainLine:
+        '''
+
+        :param start: The 'starting' SubwayStation for the given edge
+        :param stop: The 'stopping' SubwayStation for the given edge
+        :param line: The line for the given edge
+        '''
         self._start = start
         self._stop = stop
         self._line = line
@@ -124,6 +209,7 @@ class TrainLine:
     def __repr__(self):
         return "<TrainLine(start={0}, stop={1}, line={2})>".format(self.start, self.stop, self.line)
 
+
 class Schedule:
 
     def __init__(self,
@@ -132,9 +218,9 @@ class Schedule:
                  depart,
                  arrive):
         self.start_station = start_station
-        self. stop_station = stop_station
+        self.stop_station = stop_station
         self.depart = depart
         self.arrive = arrive
 
     def get_cost(self):
-        return self.arrive-self.depart
+        return self.arrive - self.depart

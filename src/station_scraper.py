@@ -3,9 +3,11 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-VALID_LINES = ['1', '2', '3', '4', '5', '6', '7', 'B', 'C', 'D', 'E', 'F']
+VALID_LINES = ['1', '2', '3', '4', '6', '7', 'B', 'C', 'D', 'E', 'F']
 
-
+'''
+TODO: Fix '5' and '2'
+'''
 def main():
     lines = VALID_LINES.copy()
     stations = pd.DataFrame(columns=['Station', 'Entrances', 'Primary Line', 'Lines'])
@@ -13,12 +15,12 @@ def main():
         # Get the stations on the given line
         scraper = StationScraper(line)
 
-        if line == lines[-1]:
-            line_df = scraper.get_page(save=True) \
-                .parse_stations()
-        else:
-            line_df = scraper.get_page_from_html('html_pages/{0}.html'.format(line)) \
-                .parse_stations()
+        # if line == lines[-1]:
+        #     line_df = scraper.get_page(save=True) \
+        #         .parse_stations()
+        # else:
+        line_df = scraper.get_page_from_html('html_pages/{0}.html'.format(line)) \
+            .parse_stations()
 
 
 
@@ -72,13 +74,23 @@ class StationScraper:
 
         # List of tables for each borough containing the stops for the given line in that borough
         station_table = soup.findAll("table", {"class", "mta-table-bordered"})
-
-        results = [['Station', 'Order', 'Entrances', 'Primary Line', 'Express', 'Lines']]
+        boroughs = soup.findAll("h2", {"class": "mta-text-5xl mta-mt-500 mta-mb-050"})
+        print(boroughs)
+        results = [['Station', 'Order', 'Borough', 'Entrances', 'Primary Line', 'Express', 'Lines']]
         order = 0
         # Iterate through each borough table and get the stations
-        for table in station_table:
+        for table, bor in zip(station_table, boroughs):
 
             # Get all of the stations for each borough, their features (local/express), and their transfers
+            borough = bor.text.upper()\
+                .replace('STATIONS', '')\
+                .replace('BRANCH', '')\
+                .replace('THE', '')\
+                .lstrip().rstrip()
+            if borough == "EASTCHESTER DYRE AVENUE" or borough == "NEREID AVENUE":
+                borough = "BRONX"
+                # order = 0
+
             stations = table.findAll("td", {"class", "col_0"})
             features = table.findAll("td", {"class", "col_4"})
             transfers = table.findAll("td", {"class", "col_3"})
@@ -95,9 +107,8 @@ class StationScraper:
                     .replace('Street', 'St')\
 
                 # Cleaned Entrances
-                cleaned_entrances = entrance.split(',')
-                cleaned_entrances = [x.lstrip().rstrip() for x in cleaned_entrances]
-                # print(cleaned_entrance)
+                cleaned_entrances = entrance.split(',')[0]
+                # cleaned_entrances = [x.lstrip().rstrip() for x in cleaned_entrances]
 
 
                 # Add all of the lines in transfers and express from features to the comma-separated list of lines
@@ -134,7 +145,7 @@ class StationScraper:
 
 
                 # Append results to output
-                results.append([station_name, order, entrance, self.line, is_express, lines])
+                results.append([station_name, order, borough, cleaned_entrances, self.line, is_express, lines])
 
                 # Increment order indicator
                 order += 1
