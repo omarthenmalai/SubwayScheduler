@@ -1,4 +1,18 @@
 station_name,borough,entrance,lines
+Far Rockaway - Mott Av,Queens,11-10 Bch Channel Dr,A
+Beach 25 St,Queens,24-01 Far Rockaway Boulevard,A
+Beach 36 St,,,A
+Beach 44 St,Queens,215 Beach 44th Street,A
+Beach 60 St,Queens,57-37 Arverne Boulevard,A
+Beach 67 St,Queens,67-20 Rockaway Beach Blvd,A
+Broad Channel,Queens,613 104 St,"A,S"
+Howard Beach - JFK Airport,Queens,1 Coleman Sq,A
+Aqueduct - N Conduit Av,,,A
+Aqueduct Racetrack,,,A
+Rockaway Blvd,Queens,94-24 Liberty Ave,A
+88 St,Queens,86-25 Liberty Ave,A
+80 St,Queens,78-09 Liberty Avenue,A
+Grant Av,Brooklyn,Elderts Lane,A
 Euclid Av,Brooklyn,2702 Pitkin Ave,"A,C"
 Shepherd Av,Brooklyn,2482 Pitkin Avenue,"A,C"
 Van Siclen Av,Brooklyn,2222 Pitkin Ave,"A,C"
@@ -39,3 +53,8 @@ Cathedral Pkwy (110 St),Manhattan,Frederick Douglass Circle,"A,B,C"
 155 St,Manhattan,889 Saint Nicholas Avenue,"A,C"
 163 St - Amsterdam Av,Manhattan,1033 St Nicholas Ave,"A,C"
 168 St,Manhattan,West 168th Street,"A,C,1"
+175 St,Manhattan,370 Fort Washington Avenue,A
+181 St,Manhattan,481 Ft Washington Ave,A
+190 St,,,A
+Dyckman St,Manhattan,Riverside Drive,A
+Inwood - 207 St,Manhattan,4966 Broadway,A
