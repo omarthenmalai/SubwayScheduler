@@ -226,7 +226,7 @@ class ScheduleService:
     def __init__(self):
         self.repository = ScheduleRepository()
 
-    def _get_schedules_by_line(self,
+    def get_schedules_by_line(self,
                                line: Schedule):
         result = self.repository.get_schedules_by_line(line)
         array = []

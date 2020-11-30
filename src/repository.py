@@ -1,12 +1,13 @@
 from neo4j import GraphDatabase
 import pymongo
 
-
 neo4j_driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "root"))
-client = pymongo.MongoClient(
-    'mongodb+srv://m001-student:m001-mongodb-basics@sandbox.wweug.mongodb.net/<dbname>?retryWrites=true&w=majority')
+# client = pymongo.MongoClient(
+#     'mongodb+srv://m001-student:m001-mongodb-basics@sandbox.wweug.mongodb.net/<dbname>?retryWrites=true&w=majority')
+client = pymongo.MongoClient('mongodb://localhost:27017/')
 client.start_session()
 collection = client['Train']['schedule']
+
 
 class MapRepository:
 
@@ -356,18 +357,24 @@ class MapRepository:
             ''')
 
 
-
-
-
-
 class ScheduleRepository:
+    def __init__(self):
+        self.collection = collection
+
 
     def get_schedules_by_line(self, line):
         schedules = []
         x = str(line)
-        result = collection.find(
+        result = self.collection.find(
             {"Line": x},
             {"_id": 0}
         )
-
         return result
+
+
+    def bulk_insert_schedules(self, schedules):
+        self.collection.insert_many()
+
+
+    def clear_db(self):
+        collection.delete_many({})

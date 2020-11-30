@@ -1,5 +1,3 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import os
 import pymongo
@@ -11,8 +9,9 @@ from os import listdir
 from os.path import isfile, join
 
 # Local imports
-from src.models import SubwayStation, TrainLine
-from src.service import MapService
+from src.models import SubwayStation, TrainLine, Schedule
+from src.service import MapService, ScheduleService
+from src.repository import ScheduleRepository
 
 """
 Lexington Av/63rd St == Lexington Av/59th St
@@ -21,7 +20,7 @@ Broadway-Lafayette St == Bleecker St
 """
 
 
-def init_db():
+def init_map_db():
     # Initialize MapService to add the SubwayStations and CONNECTS relationships
     map_service = MapService()
 
@@ -51,13 +50,14 @@ def init_db():
 
 # mongodb://localhost:27017/
 def init_schedule_db():
-    myclient = MongoClient(
-        'mongodb+srv://m001-student:m001-mongodb-basics@sandbox.wweug.mongodb.net/<dbname>?retryWrites=true&w=majority')
+    # myclient = MongoClient(
+    #     'mongodb+srv://m001-student:m001-mongodb-basics@sandbox.wweug.mongodb.net/<dbname>?retryWrites=true&w=majority')
 
-    db = myclient["Train"]
-    collection = db["schedule"]
+    # db = myclient["Train"]
+    # collection = db["schedule"]
 
-    collection.delete_many({})
+    schedule_repository = ScheduleRepository()
+    schedule_repository.clear_db()
 
     onlyfiles = [f for f in listdir('Trains') if isfile(join('Trains', f))]
 
@@ -65,7 +65,7 @@ def init_schedule_db():
 
     for i in range(len(filtered)):
         filename = str(filtered[i])
-        df = pd.read_csv('1-train-forward.csv')
+        df = pd.read_csv('Trains/1-train-forward.csv')
         stations = df.columns.values.tolist()
 
         split_file_name = filename.split('-')
@@ -94,4 +94,5 @@ def init_schedule_db():
 
             documents_array.append(train)
 
-        collection.insert_many(documents_array)
+        schedule_repository.bulk_insert_schedules(documents_array)
+        # collection.insert_many(documents_array)

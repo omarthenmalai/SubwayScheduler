@@ -1,7 +1,7 @@
 from src.models import SubwayStation, TrainLine
 from src.service import MapService
 from src.repository import MapRepository
-from src.database import init_db
+from src.database import init_map_db, init_schedule_db
 import matplotlib.pyplot as plt
 
 # Fully Mapped:
@@ -16,12 +16,13 @@ import matplotlib.pyplot as plt
 
 # TODO:
 
+init_schedule_db()
 
 
-map_service = MapService()
-map_repository = MapRepository()
+# map_service = MapService()
+# map_repository = MapRepository()
 
-print(map_repository.stations_with_line_without_relationship("4"))
+# print(map_repository.stations_with_line_without_relationship("4"))
 
 
 # stat = map_service.get_station_by_station_name("Liberty Av")
