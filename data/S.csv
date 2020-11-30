@@ -1,6 +1,6 @@
-station_name,borough,entrance,lines
-Rockaway Park - Beach 116 St,Queens,114-12R Rockaway Beach Boulevard,"A,S"
-Beach 105 St,Queens,105-02 Rockaway Beach Boulevard,"A,S"
-Beach 98 St,Queens,230 Beach 99th Street,"A,S"
-Beach 90 St,Queens,303 Bch 89 St,"A,S"
-Broad Channel,Queens,613 104 St,"A,S"
+station_name,borough,entrance,lines,latitude,longitude
+Rockaway Park - Beach 116 St,Queens,114-12R Rockaway Beach Boulevard,"A,S",40.5805257,-73.8358604
+Beach 105 St,Queens,105-02 Rockaway Beach Boulevard,"A,S",40.5829215,-73.82743238940706
+Beach 98 St,Queens,230 Beach 99th Street,"A,S",40.5850904,-73.82061745189574
+Beach 90 St,Queens,303 Bch 89 St,"A,S",,
+Broad Channel,Queens,613 104 St,"A,S",40.6817152,-73.837694

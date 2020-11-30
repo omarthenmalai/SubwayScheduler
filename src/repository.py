@@ -1,8 +1,12 @@
 from neo4j import GraphDatabase
+import pymongo
 
 
 neo4j_driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "root"))
-
+client = pymongo.MongoClient(
+    'mongodb+srv://m001-student:m001-mongodb-basics@sandbox.wweug.mongodb.net/<dbname>?retryWrites=true&w=majority')
+client.start_session()
+collection = client['Train']['schedule']
 
 class MapRepository:
 
@@ -31,7 +35,9 @@ class MapRepository:
                         borough: $borough, 
                         entrances: $entrances, 
                         lines: $lines,
-                        status: $status
+                        status: $status,
+                        latitude: $latitude,
+                        longitude: $longitude
                     }) 
                     RETURN s
             ''',
@@ -39,14 +45,32 @@ class MapRepository:
             borough=station.borough,
             entrances=station.entrances,
             lines=station.lines,
-            status=station.status
+            status=station.status,
+            latitude=station.latitude,
+            longitude=station.longitude
         )
         return result.single()
+
+    def get_stations_by_line(self, line):
+        with neo4j_driver.session() as s:
+            transact = s.write_transaction(self._get_stations_by_line, line)
+        return transact
+
+    @staticmethod
+    def _get_stations_by_line(tx, line):
+        result = tx.run(
+            '''
+            MATCH (s:SubwayStation)
+            WHERE $line in s.lines
+            RETURN s
+            ''',
+            line=line
+        )
+        return [x for x in result]
 
     def get_station_by_station_name(self, station_name):
         with neo4j_driver.session() as s:
             transact = s.write_transaction(self._get_station_by_station_name, station_name)
-
         return transact
 
     @staticmethod
@@ -311,8 +335,39 @@ class MapRepository:
         return [x for x in result]
 
     @staticmethod
+    def stations_with_line_without_relationship(line):
+        with neo4j_driver.session() as s:
+            result = s.run(
+                '''
+                MATCH (s:SubwayStation)
+                WHERE $line in s.lines
+                AND NOT (s)-[:CONNECTS{line:$line}]-()
+                RETURN s
+                ''',
+                line=line
+            )
+            return [x for x in result]
+
+    @staticmethod
     def clear_db():
         with neo4j_driver.session() as s:
             s.run('''
                 MATCH (n) DETACH DELETE n
             ''')
+
+
+
+
+
+
+class ScheduleRepository:
+
+    def get_schedules_by_line(self, line):
+        schedules = []
+        x = str(line)
+        result = collection.find(
+            {"Line": x},
+            {"_id": 0}
+        )
+
+        return result

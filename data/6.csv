@@ -1,39 +1,39 @@
-station_name,borough,entrance,lines
-Pelham Bay Park,The Bronx,3263 Westchester Ave,"6x,6"
-Buhre Av,The Bronx,2941 Westchester Ave,"6x,6"
-Middletown Rd,The Bronx,2813 Westchester Avenue,"6x,6"
-Westchester Sq - E Tremont Av,The Bronx,135 Westchester Sq,"6x,6"
-Zerega Av,The Bronx,Westchester Avenue,"6x,6"
-Castle Hill Av,The Bronx,2215 Westchester Ave,"6x,6"
-Parkchester,The Bronx,Hugh J. Grant Circle,"6x,6"
-St Lawrence Av,The Bronx,1766 Westchester Ave,"6x,6"
-Morrison Av- Sound View,The Bronx,Morrison Avenue,"6x,6"
-Elder Av,The Bronx,Elder Avenue,"6x,6"
-Whitlock Av,The Bronx,1205 Whitlock Avenue,"6x,6"
-Hunts Point Av,The Bronx,1065 E 163 St,"6x,6"
-Longwood Av,The Bronx,794 Southern Blvd,6
-E 149 St,The Bronx,535 Southern Blvd,6
-E 143 St - St Mary's St,The Bronx,360 Southern Blvd,6
-Cypress Av,The Bronx,678 E 138 St,6
-Brook Av,The Bronx,230 Brook Avenue,6
-3 Av - 138 St,The Bronx,285 E 138 St,"6x,6"
-125 St,Manhattan,2060 Lexington Ave,"4,5,6x,6"
-116 St,Manhattan,150 East 116th Street,"4,6x,6"
-110 St,Manhattan,150 East 110th Street,"4,6x,6"
-103 St,Manhattan,1636 Lexington Ave,"4,6x,6"
-96 St,Manhattan,1486 Lexington Avenue,"4,6x,6"
-86 St,Manhattan,1280 Lexington Avenue,"4,5,6x,6"
-77 St,Manhattan,1100 Lexington Ave,"4,6x,6"
-68 St - Hunter College,Manhattan,925 Lexington Avenue,"4,6x,6"
-Lexington Av / 59 St,Manhattan,743 Lexington Avenue,"F,N,Q,R,4,5,6"
-51 St,Manhattan,122 East 51st Street,"4,6x,6,E,M"
-Grand Central - 42 St,Manhattan,107 E 42 St,"4,5,6x,6,7,7x,S"
-33 St,Manhattan,2 Park Ave,"4,6x,6"
-28 St,Manhattan,400 Park Ave S,"4,6x,6"
-23 St,Manhattan,304 Park Ave S,"4,6x,6"
-Union Sq - 14 St,Manhattan,East 14th Street,"4,5,6,6x,L,N,Q,R,W"
-Astor Pl,Manhattan,East 8th Street,"4,6x,6"
-Bleecker St,Manhattan,338 Lafayette Street,"4,6x,6,B,D,F,M"
-Spring St,Manhattan,63 Spring Street,"4,6x,6"
-Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,6"
-Brooklyn Bridge - Chambers St,Manhattan,1 Centre St,"J,Z,4,5,6"
+station_name,borough,entrance,lines,latitude,longitude
+Pelham Bay Park,The Bronx,3263 Westchester Ave,"6x,6",40.8532292,-73.8261349
+Buhre Av,The Bronx,2941 Westchester Ave,"6x,6",40.8469404,-73.8326768
+Middletown Rd,The Bronx,2813 Westchester Avenue,"6x,6",40.8440496,-73.8363639
+Westchester Sq - E Tremont Av,The Bronx,135 Westchester Sq,"6x,6",40.8410373,-73.8430773
+Zerega Av,The Bronx,Westchester Avenue,"6x,6",40.8532292,-73.8261349
+Castle Hill Av,The Bronx,2215 Westchester Ave,"6x,6",40.834462200000004,-73.85126652473694
+Parkchester,The Bronx,Hugh J. Grant Circle,"6x,6",40.8331772,-73.8603295
+St Lawrence Av,The Bronx,1766 Westchester Ave,"6x,6",40.8313599,-73.8675771
+Morrison Av- Sound View,The Bronx,Morrison Avenue,"6x,6",40.8258991,-73.8737536
+Elder Av,The Bronx,Elder Avenue,"6x,6",40.8285948,-73.8791931
+Whitlock Av,The Bronx,1205 Whitlock Avenue,"6x,6",40.8267879,-73.8864032
+Hunts Point Av,The Bronx,1065 E 163 St,"6x,6",,
+Longwood Av,The Bronx,794 Southern Blvd,6,40.816057666666666,-73.89634533333333
+E 149 St,The Bronx,535 Southern Blvd,6,40.8123621,-73.9039139
+E 143 St - St Mary's St,The Bronx,360 Southern Blvd,6,40.808817,-73.9074186
+Cypress Av,The Bronx,678 E 138 St,6,,
+Brook Av,The Bronx,230 Brook Avenue,6,40.807372,-73.9191874
+3 Av - 138 St,The Bronx,285 E 138 St,"6x,6",,
+125 St,Manhattan,2060 Lexington Ave,"4,5,6x,6",40.804153,-73.93770533333334
+116 St,Manhattan,150 East 116th Street,"4,6x,6",40.7984398,-73.9415652
+110 St,Manhattan,150 East 110th Street,"4,6x,6",40.7850736,-73.9514086
+103 St,Manhattan,1636 Lexington Ave,"4,6x,6",40.7907049,-73.9475801
+96 St,Manhattan,1486 Lexington Avenue,"4,6x,6",40.7857835,-73.9512112
+86 St,Manhattan,1280 Lexington Avenue,"4,5,6x,6",40.779721,-73.9556314
+77 St,Manhattan,1100 Lexington Ave,"4,6x,6",40.7738026,-73.9599174
+68 St - Hunter College,Manhattan,925 Lexington Avenue,"4,6x,6",40.767958,-73.9637948
+Lexington Av / 59 St,Manhattan,743 Lexington Avenue,"F,N,Q,R,4,5,6",40.7624849,-73.9678233
+51 St,Manhattan,122 East 51st Street,"4,6x,6,E,M",40.7571088,-73.9721264
+Grand Central - 42 St,Manhattan,107 E 42 St,"4,5,6x,6,7,7x,S",40.796501899999996,-73.91576940902175
+33 St,Manhattan,2 Park Ave,"4,6x,6",40.74635635,-73.98257652206097
+28 St,Manhattan,400 Park Ave S,"4,6x,6",40.74323705,-73.98459373040365
+23 St,Manhattan,304 Park Ave S,"4,6x,6",40.740175,-73.9868031
+Union Sq - 14 St,Manhattan,East 14th Street,"4,5,6,6x,L,N,Q,R,W",40.7294404,-73.9780305
+Astor Pl,Manhattan,East 8th Street,"4,6x,6",40.7299383,-73.9908141
+Bleecker St,Manhattan,338 Lafayette Street,"4,6x,6,B,D,F,M",40.7260781,-73.9947218
+Spring St,Manhattan,63 Spring Street,"4,6x,6",40.7224443,-73.9972526
+Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,6",40.7187615,-74.0006954
+Brooklyn Bridge - Chambers St,Manhattan,1 Centre St,"J,Z,4,5,6",40.7138338,-74.0032757

@@ -1,41 +1,41 @@
-station_name,borough,entrance,lines
-Jamaica - 179 St,Queens,179-19 Hillside Avenue,"E,F"
-169 St,Queens,168-32 Hillside Ave,F
-Parsons Blvd,Queens,153-33 Hillside Ave,"E,F"
-Sutphin Blvd,Queens,144-34 Hillside Avenue,F
-Briarwood - Van Wyck Blvd,Queens,Van Wyck Expressway,"E,F"
-Kew Gardens - Union Tpke,Queens,Union Turnpike,"E,F"
-75 Av,Queens,111-16 Queens Blvd,"E,F"
-Forest Hills - 71 Av,Queens,107-48 Queens Blvd,"E,F,M,R"
-Jackson Hts - Roosevelt Av - 74 St,Queens,74-02 Roosevelt Avenue,"E,F,M,R,7"
-21 St - Queensbridge,Queens,41-05 12th Street,F
-Roosevelt Island,Manhattan,Road 6,F
-Lexington Av/63 St,Manhattan,139 East 63rd Street,"F,N,Q,R,4,5,6"
-57 St,Manhattan,1387 6th Avenue,F
-47-50 Sts - Rockefeller Ctr,Manhattan,69 West 48th Street,"B,D,F,M"
-42 St - Bryant Pk,Manhattan,Avenue of the Americas,"B,D,F,M"
-34 St - Herald Sq,Manhattan,Avenue of the Americas,"B,D,F,M,N,Q,R"
-23 St,Manhattan,717 6th Avenue,"F,M"
-14 St - 6 Avenue,Manhattan,534 Ave Of The Americas,"F,M,L"
-W 4 St,Manhattan,West 4th Street,"A,B,C,D,E,F,M"
-Broadway-Lafayette St,Manhattan,606 Broadway,"B,D,F,M,4,6"
-2 Av,Manhattan,East Houston Street,F
-Delancey St - Essex St,Manhattan,118 Delancey Street,"F,J,M,Z"
-East Broadway,Manhattan,10 Rutgers Street,F
-York St,Brooklyn,110 Jay St,F
-Jay St - Metrotech,Brooklyn,55 Willoughby Street,"A,C,F,R"
-Bergen St,Brooklyn,164 Smith St,"F,G"
-Carroll St,Brooklyn,330 Smith Street,"F,G"
-Smith - 9 Sts,Brooklyn,55 9 St,"F,G"
-4 Av - 9 St,Brooklyn,250 9th Street,"D,F,N,R,G"
-7 Av,Brooklyn,484 9 St,"F,G"
-15 St - Prospect Park,Brooklyn,481 16 St,"F,G"
-Fort Hamilton Pkwy,Brooklyn,Prospect Avenue,"F,G"
-Church Av,Brooklyn,412 Mc Donald Ave,"F,G"
-Ditmas Av,Brooklyn,745 Mc Donald Ave,F
-18 Av,Brooklyn,986 Mc Donald Ave,F
-Avenue I,Brooklyn,1149 Mc Donald Ave,F
-Bay Pkwy,Brooklyn,1324 Mc Donald Ave,F
-Avenue N,Brooklyn,1552 Mc Donald Ave,F
-Avenue P,Brooklyn,1801 Mc Donald Ave,F
-Kings Hwy,Brooklyn,2026 Mc Donald Ave,F
+station_name,borough,entrance,lines,latitude,longitude
+Jamaica - 179 St,Queens,179-19 Hillside Avenue,"E,F",40.7128008,-73.7839029
+169 St,Queens,168-32 Hillside Ave,F,40.7103146,-73.7935823
+Parsons Blvd,Queens,153-33 Hillside Ave,"E,F",40.7077304,-73.8033016
+Sutphin Blvd,Queens,144-34 Hillside Avenue,F,40.7053151,-73.8106646
+Briarwood - Van Wyck Blvd,Queens,Van Wyck Expressway,"E,F",40.7165356,-73.8262326
+Kew Gardens - Union Tpke,Queens,Union Turnpike,"E,F",40.7158237,-73.824885
+75 Av,Queens,111-16 Queens Blvd,"E,F",40.7429835,-73.9158927
+Forest Hills - 71 Av,Queens,107-48 Queens Blvd,"E,F,M,R",40.72128145,-73.84471342325449
+Jackson Hts - Roosevelt Av - 74 St,Queens,74-02 Roosevelt Avenue,"E,F,M,R,7",40.7585475,-73.8332175
+21 St - Queensbridge,Queens,41-05 12th Street,F,40.7539704,-73.9428999
+Roosevelt Island,Manhattan,Road 6,F,40.759168,-73.9527555
+Lexington Av/63 St,Manhattan,139 East 63rd Street,"F,N,Q,R,4,5,6",40.7648134,-73.96602031034847
+57 St,Manhattan,1387 6th Avenue,F,40.764037,-73.9776284
+47-50 Sts - Rockefeller Ctr,Manhattan,69 West 48th Street,"B,D,F,M",40.7586523,-73.9811024
+42 St - Bryant Pk,Manhattan,Avenue of the Americas,"B,D,F,M",40.7490662,-73.9882979
+34 St - Herald Sq,Manhattan,Avenue of the Americas,"B,D,F,M,N,Q,R",40.7490662,-73.9882979
+23 St,Manhattan,717 6th Avenue,"F,M",40.7431323,-73.9928868
+14 St - 6 Avenue,Manhattan,534 Ave Of The Americas,"F,M,L",40.7374265,-73.9965684
+W 4 St,Manhattan,West 4th Street,"A,B,C,D,E,F,M",40.7295629,-73.9965691
+Broadway-Lafayette St,Manhattan,606 Broadway,"B,D,F,M,4,6",40.8088168,-73.9632044
+2 Av,Manhattan,East Houston Street,F,40.7188724,-73.97549
+Delancey St - Essex St,Manhattan,118 Delancey Street,"F,J,M,Z",40.7186904,-73.9878914
+East Broadway,Manhattan,10 Rutgers Street,F,40.7137577,-73.9904961
+York St,Brooklyn,110 Jay St,F,40.70133935,-73.98693871577346
+Jay St - Metrotech,Brooklyn,55 Willoughby Street,"A,C,F,R",40.6923089,-73.9867358
+Bergen St,Brooklyn,164 Smith St,"F,G",40.6862203,-73.9909614
+Carroll St,Brooklyn,330 Smith Street,"F,G",40.680303,-73.995048
+Smith - 9 Sts,Brooklyn,55 9 St,"F,G",40.670847,-73.988302
+4 Av - 9 St,Brooklyn,250 9th Street,"D,F,N,R,G",40.670289999999994,-73.9891634663332
+7 Av,Brooklyn,484 9 St,"F,G",40.670847,-73.988302
+15 St - Prospect Park,Brooklyn,481 16 St,"F,G",40.6379042,-73.9996623
+Fort Hamilton Pkwy,Brooklyn,Prospect Avenue,"F,G",40.665414,-73.992872
+Church Av,Brooklyn,412 Mc Donald Ave,"F,G",,
+Ditmas Av,Brooklyn,745 Mc Donald Ave,F,,
+18 Av,Brooklyn,986 Mc Donald Ave,F,,
+Avenue I,Brooklyn,1149 Mc Donald Ave,F,,
+Bay Pkwy,Brooklyn,1324 Mc Donald Ave,F,,
+Avenue N,Brooklyn,1552 Mc Donald Ave,F,,
+Avenue P,Brooklyn,1801 Mc Donald Ave,F,,
+Kings Hwy,Brooklyn,2026 Mc Donald Ave,F,,

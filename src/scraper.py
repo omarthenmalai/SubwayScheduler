@@ -5,6 +5,7 @@ import pandas as pd
 import time
 import os
 import numpy as np
+import geocoder
 
 CODES = "https://moovitapp.com/index/en/public_transit-lines-NYCNJ-121-855111"
 SITE = "https://moovitapp.com/index/en/"
@@ -85,12 +86,29 @@ class Parser:
         return np.array(station_boroughs).T
 
 
+
+def get_coordinates(addresses, boroughs):
+    latitude = []
+    longitude = []
+    for address, borough in zip(addresses, boroughs):
+        try:
+            g = geocoder.osm('{}, {}, New York'.format(address, borough)).json
+            latitude.append(g['lat'])
+            longitude.append(g['lng'])
+        except:
+            latitude.append(None)
+            longitude.append(None)
+
+    return np.array(latitude).T, np.array(longitude).T
+
+
+
 if __name__ == "__main__":
     folder = "html_pages"
     pages = os.listdir(folder)
     pages = ['{}/{}'.format(folder, page) for page in pages if len(page) <= 7]
 
-    columns = ['station_name', 'borough', 'entrance', 'lines']
+    columns = ['station_name', 'borough', 'entrance', 'lines', 'latitude', 'longitude']
     output = pd.DataFrame(columns=columns)
 
     for page in pages:
@@ -101,7 +119,8 @@ if __name__ == "__main__":
         lines = parser.get_station_lines()
         entrances = parser.get_station_entrances()
         boroughs = parser.get_station_boroughs()
-        csv = pd.DataFrame(np.column_stack((stations, boroughs, entrances, lines)), columns=columns)
+        latitude, longitude = get_coordinates(addresses=entrances, boroughs=boroughs)
+        csv = pd.DataFrame(np.column_stack((stations, boroughs, entrances, lines, latitude, longitude)), columns=columns)
         csv.to_csv('data/{}.csv'.format(page.split('/')[1].split('.')[0]),
                    index=False)
 

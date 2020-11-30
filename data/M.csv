@@ -1,9 +1,9 @@
-station_name,borough,entrance,lines
-Middle Village - Metropolitan Av,,,M
-Fresh Pond Rd,Queens,67th Avenue,M
-Forest Av,Queens,1926 Madison Street,M
-Seneca Av,Queens,702 Seneca Ave,M
-Myrtle - Wyckoff Avs,Brooklyn,282 Wyckoff Ave,"L,M"
-Knickerbocker Av,Brooklyn,1398 Myrtle Avenue,M
-Central Av,Brooklyn,1252 Myrtle Ave,M
-Myrtle Av,Brooklyn,935 Broadway,"J,M,Z"
+station_name,borough,entrance,lines,latitude,longitude
+Middle Village - Metropolitan Av,,,M,40.7127281,-74.0060152
+Fresh Pond Rd,Queens,67th Avenue,M,40.7267968,-73.8532472
+Forest Av,Queens,1926 Madison Street,M,40.70456115,-73.90325206580344
+Seneca Av,Queens,702 Seneca Ave,M,40.7025797,-73.9077320546278
+Myrtle - Wyckoff Avs,Brooklyn,282 Wyckoff Ave,"L,M",40.699725,-73.9117529
+Knickerbocker Av,Brooklyn,1398 Myrtle Avenue,M,40.6985581,-73.9196848
+Central Av,Brooklyn,1252 Myrtle Ave,M,40.697711299999995,-73.92734363678841
+Myrtle Av,Brooklyn,935 Broadway,"J,M,Z",40.6973077,-73.9355701

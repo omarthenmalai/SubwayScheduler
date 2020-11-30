@@ -56,7 +56,7 @@ class MapService:
         return paths
 
     def get_station_by_station_name(self,
-                                    station_name: SubwayStation):
+                                    station_name: str):
 
         result = self.repository.get_station_by_station_name(station_name)
         return [SubwayStation.from_node(record['s']) for record in result][0]
@@ -77,6 +77,12 @@ class MapService:
 
         result = self.repository.get_connections_between_stations(station_1, station_2)
         return result
+
+    def get_stations_by_line(self,
+                             line: int):
+        result = self.repository.get_stations_by_line(line)
+        stations = [SubwayStation.from_node(node['s']) for node in result]
+        return stations
 
     def set_station_status_out_of_order(self,
                                         station: SubwayStation):
@@ -213,3 +219,19 @@ class MapService:
                                                    reroute=rerouted_stations[station_index + 1:])
 
         return True
+
+
+class ScheduleService:
+
+    def __init__(self):
+        self.repository = ScheduleRepository()
+
+    def _get_schedules_by_line(self,
+                               line: Schedule):
+        result = self.repository.get_schedules_by_line(line)
+        array = []
+
+        for record in result:
+            array.append(Schedule.from_mongo(record))
+
+        return array

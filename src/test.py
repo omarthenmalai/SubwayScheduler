@@ -2,7 +2,7 @@ from src.models import SubwayStation, TrainLine
 from src.service import MapService
 from src.repository import MapRepository
 from src.database import init_db
-import timeit
+import matplotlib.pyplot as plt
 
 # Fully Mapped:
 # 1
@@ -15,21 +15,28 @@ import timeit
 # 6 Express
 
 # TODO:
-# Fix split in Bronx 5 line
-# Fix "7 Av" station for B-line. There are two instances with the same name
 
-MapRepository.clear_db()
-init_db()
+
 
 map_service = MapService()
 map_repository = MapRepository()
-reroute = map_service.get_station_by_station_name("Grand Central 42 St")
-start = map_service.get_station_by_station_name("14 St-Union Sq")
-stop = map_service.get_station_by_station_name("Woodlawn")
 
-map_service.set_station_status_out_of_order(reroute)
+print(map_repository.stations_with_line_without_relationship("4"))
 
 
-res = map_service.get_shortest_path(start, stop)
-print(res)
+# stat = map_service.get_station_by_station_name("Liberty Av")
+
+# stations = map_service.get_stations_by_line("S")
+# longitude = [station.longitude for station in stations if isinstance(station.longitude, float)]
+# latitude = [station.latitude for station in stations if isinstance(station.longitude, float)]
+
+# reroute = map_service.get_station_by_station_name("Grand Central 42 St")
+# start = map_service.get_station_by_station_name("14 St-Union Sq")
+# stop = map_service.get_station_by_station_name("Woodlawn")
+#
+# map_service.set_station_status_out_of_order(reroute)
+#
+#
+# res = map_service.get_shortest_path(start, stop)
+# print(res)
 

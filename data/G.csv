@@ -1,22 +1,22 @@
-station_name,borough,entrance,lines
-Court Sq - 23 St,Queens,45-01 23 St,"E,G,M,7"
-21 St,Queens,13-01 Jackson Avenue,G
-Greenpoint Av,Brooklyn,940 Manhattan Ave,G
-Nassau Av,Brooklyn,664 Manhattan Ave,G
-Metropolitan Av,Brooklyn,405 Union Ave,"G,L"
-Broadway,Brooklyn,187 Union Avenue,G
-Flushing Av,Brooklyn,Wallabout Street,G
-Myrtle - Willoughby Avs,Brooklyn,597 Marcy Avenue,G
-Bedford - Nostrand Avs,Brooklyn,536 Lafayette Ave,G
-Classon Av,Brooklyn,344 Classon Ave,G
-Clinton - Washington Avs,Brooklyn,238 Lafayette Ave,G
-Fulton St,Brooklyn,64 Lafayette Ave,G
-Hoyt - Schermerhorn Sts,Brooklyn,227 Schermerhorn St,"A,C,G"
-Bergen St,Brooklyn,164 Smith St,"F,G"
-Carroll St,Brooklyn,330 Smith Street,"F,G"
-Smith - 9 Sts,Brooklyn,55 9 St,"F,G"
-4 Av - 9 St,Brooklyn,250 9th Street,"D,F,N,R,G"
-7 Av,Brooklyn,484 9 St,"F,G"
-15 St - Prospect Park,Brooklyn,481 16 St,"F,G"
-Fort Hamilton Pkwy,Brooklyn,Prospect Avenue,"F,G"
-Church Av,Brooklyn,412 Mc Donald Ave,"F,G"
+station_name,borough,entrance,lines,latitude,longitude
+Court Sq - 23 St,Queens,45-01 23 St,"E,G,M,7",40.7747019,-73.8688116
+21 St,Queens,13-01 Jackson Avenue,G,40.7441966,-73.9498048
+Greenpoint Av,Brooklyn,940 Manhattan Ave,G,40.73139155,-73.95413548453826
+Nassau Av,Brooklyn,664 Manhattan Ave,G,40.7247069,-73.95107084145803
+Metropolitan Av,Brooklyn,405 Union Ave,"G,L",40.7125736,-73.9514916
+Broadway,Brooklyn,187 Union Avenue,G,40.7060665,-73.9505223
+Flushing Av,Brooklyn,Wallabout Street,G,40.699708,-73.957167
+Myrtle - Willoughby Avs,Brooklyn,597 Marcy Avenue,G,40.694532,-73.9488938
+Bedford - Nostrand Avs,Brooklyn,536 Lafayette Ave,G,40.689447200000004,-73.9534990229042
+Classon Av,Brooklyn,344 Classon Ave,G,40.688739,-73.9601166
+Clinton - Washington Avs,Brooklyn,238 Lafayette Ave,G,40.6880023,-73.9666569
+Fulton St,Brooklyn,64 Lafayette Ave,G,40.6869934,-73.9753732
+Hoyt - Schermerhorn Sts,Brooklyn,227 Schermerhorn St,"A,C,G",40.6886693,-73.9848908
+Bergen St,Brooklyn,164 Smith St,"F,G",40.6862203,-73.9909614
+Carroll St,Brooklyn,330 Smith Street,"F,G",40.680303,-73.995048
+Smith - 9 Sts,Brooklyn,55 9 St,"F,G",40.670847,-73.988302
+4 Av - 9 St,Brooklyn,250 9th Street,"D,F,N,R,G",40.670289999999994,-73.9891634663332
+7 Av,Brooklyn,484 9 St,"F,G",40.670847,-73.988302
+15 St - Prospect Park,Brooklyn,481 16 St,"F,G",40.6379042,-73.9996623
+Fort Hamilton Pkwy,Brooklyn,Prospect Avenue,"F,G",40.665414,-73.992872
+Church Av,Brooklyn,412 Mc Donald Ave,"F,G",,

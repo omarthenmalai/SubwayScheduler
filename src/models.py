@@ -39,12 +39,16 @@ class SubwayStation:
                  borough: str = None,
                  entrances: str = None,
                  lines: list = None,
-                 status: str = None) -> SubwayStation:
+                 status: str = None,
+                 latitude: float = None,
+                 longitude: float = None) -> SubwayStation:
         self._station_name = station_name
         self._entrances = entrances
         self._lines = lines
         self._status = status  # "Normal" or "Out of Order"
         self._borough = borough
+        self._latitude = latitude
+        self._longitude = longitude
 
     @property
     def station_name(self):
@@ -91,6 +95,24 @@ class SubwayStation:
         self._status = value
         return self
 
+    @property
+    def latitude(self):
+        return self._latitude
+
+    @latitude.setter
+    def latitude(self, value):
+        self._latitude = value
+        return self
+
+    @property
+    def longitude(self):
+        return self._longitude
+
+    @longitude.setter
+    def longitude(self, value):
+        self._longitude = value
+        return self
+
     def append_line(self, line):
         self._lines.append(line)
         return self
@@ -111,7 +133,9 @@ class SubwayStation:
             borough=node['borough'],
             entrances=node['entrances'],
             lines=node['lines'],
-            status=node['status']
+            status=node['status'],
+            latitude=node['latitude'],
+            longitude=node['longitude']
         )
 
     @classmethod
@@ -130,16 +154,26 @@ class SubwayStation:
         if row['entrance'] == np.nan:
             entrance = 'No Entrance Found'
 
-        if row['station_name'] == "Junius St":
-            print(row)
-
         return cls(
             station_name=row['station_name'],
             borough=borough,
             entrances=entrance,
             lines=lines,
-            status='Normal'
+            status='Normal',
+            latitude=row['latitude'],
+            longitude=row['longitude']
         )
+
+    def to_dict(self):
+        return {
+            "station_name": self.station_name,
+            "borough": self.borough,
+            "entrances": self.entrances,
+            "lines": self.lines,
+            "status": self.status,
+            "latitude": self.latitude,
+            "longitude": self.longitude
+        }
 
     def __eq__(self, other: SubwayStation) -> bool:
         '''
@@ -211,16 +245,50 @@ class TrainLine:
 
 
 class Schedule:
-
     def __init__(self,
-                 start_station: str,
-                 stop_station: str,
-                 depart,
-                 arrive):
-        self.start_station = start_station
-        self.stop_station = stop_station
-        self.depart = depart
-        self.arrive = arrive
+                 line: str = None,
+                 direction: str = None,
+                 schedule: [] = None):
+        self.line = line
+        self.direction = direction
+        self.schedule = schedule
 
-    def get_cost(self):
-        return self.arrive - self.depart
+    @property
+    def line(self):
+        return self.line
+
+    @line.setter
+    def line(self, value):
+        self.line = value
+        return self
+
+    @property
+    def direction(self):
+        return self.direction
+
+    @direction.setter
+    def direction(self, value):
+        self.direction = value
+        return self
+
+    @property
+    def schedule(self):
+        return self.schedule
+
+    @schedule.setter
+    def schedule(self, value):
+        self.schedule = value
+        return self
+
+    @classmethod
+    def from_mongo(cls, query: {}) -> Schedule:
+        '''
+        Creates a Schedule object from Mongo query result
+        :param schedule: a Mongo db querey result
+        :return: A SubwayStation object with properties equal to the property of the node
+        '''
+        return cls(
+            line=query['Line'],
+            direction=query['Direction'],
+            schedule=query['Schedule']
+        )

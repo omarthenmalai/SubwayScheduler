@@ -1,22 +1,22 @@
-station_name,borough,entrance,lines
-Jamaica Center - Parsons/Archer,Queens,155-01 Archer Avenue,"E,J,Z"
-Sutphin Blvd - Archer Av - JFK Airport,Queens,93-25 Sutphin Blvd,"E,J,Z"
-121 St,Queens,121-17 Jamaica Ave,"J,Z"
-104 St,Queens,102-28 Jamaica Ave,"J,Z"
-Woodhaven Blvd,Queens,93-15 Jamaica Avenue,"J,Z"
-75 St,Queens,74-24 Jamaica Ave,"J,Z"
-Crescent St,Brooklyn,3294 Fulton St,"J,Z"
-Norwood Av,Brooklyn,153 Hale Avenue,"J,Z"
-Van Siclen Av,Brooklyn,2788 Fulton Street,"J,Z"
-Alabama Av,Brooklyn,2598 Fulton St,"J,Z"
-Broadway Jct,Brooklyn,2399 Fulton Street,"A,C,J,L,Z"
-Chauncey St,Brooklyn,1747 Broadway,"J,Z"
-Gates Av,Brooklyn,1363 Broadway,"J,Z"
-Myrtle Av,Brooklyn,935 Broadway,"J,M,Z"
-Marcy Av,Brooklyn,299 Broadway,"J,M,Z"
-Delancey St - Essex St,Manhattan,118 Delancey Street,"F,J,M,Z"
-Bowery,Manhattan,173 Bowery,"J,Z"
-Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,6"
-Brooklyn Bridge - Chambers St,Manhattan,1 Centre St,"J,Z,4,5,6"
-Fulton St,Manhattan,139 Fulton St,"A,C,N,R,W,J,Z,2,3,4,5"
-Broad St,Manhattan,40 Broad Street,"J,Z"
+station_name,borough,entrance,lines,latitude,longitude
+Jamaica Center - Parsons/Archer,Queens,155-01 Archer Avenue,"E,J,Z",40.702391,-73.8008265
+Sutphin Blvd - Archer Av - JFK Airport,Queens,93-25 Sutphin Blvd,"E,J,Z",40.70546,-73.810708
+121 St,Queens,121-17 Jamaica Ave,"J,Z",40.7134769,-73.7563404
+104 St,Queens,102-28 Jamaica Ave,"J,Z",40.7228607,-73.7290154
+Woodhaven Blvd,Queens,93-15 Jamaica Avenue,"J,Z",40.6939929,-73.8515891
+75 St,Queens,74-24 Jamaica Ave,"J,Z",40.69113845,-73.86707246459011
+Crescent St,Brooklyn,3294 Fulton St,"J,Z",40.6830395,-73.87371741833773
+Norwood Av,Brooklyn,153 Hale Avenue,"J,Z",40.6812771,-73.8800644
+Van Siclen Av,Brooklyn,2788 Fulton Street,"J,Z",40.6779288,-73.8917941
+Alabama Av,Brooklyn,2598 Fulton St,"J,Z",40.6768225,-73.9000317
+Broadway Jct,Brooklyn,2399 Fulton Street,"A,C,J,L,Z",40.6782946,-73.9040846
+Chauncey St,Brooklyn,1747 Broadway,"J,Z",40.6831815,-73.91040417256447
+Gates Av,Brooklyn,1363 Broadway,"J,Z",40.68984695,-73.92213148175261
+Myrtle Av,Brooklyn,935 Broadway,"J,M,Z",40.6973077,-73.9355701
+Marcy Av,Brooklyn,299 Broadway,"J,M,Z",40.7084704,-73.9577078
+Delancey St - Essex St,Manhattan,118 Delancey Street,"F,J,M,Z",40.7186904,-73.9878914
+Bowery,Manhattan,173 Bowery,"J,Z",40.7200351,-73.9939316
+Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,6",40.7187615,-74.0006954
+Brooklyn Bridge - Chambers St,Manhattan,1 Centre St,"J,Z,4,5,6",40.7138338,-74.0032757
+Fulton St,Manhattan,139 Fulton St,"A,C,N,R,W,J,Z,2,3,4,5",40.7103635,-74.0077635
+Broad St,Manhattan,40 Broad Street,"J,Z",40.7064596,-74.0112322
