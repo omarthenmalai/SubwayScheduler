@@ -1,5 +1,9 @@
+from __future__ import annotations
 from neo4j import GraphDatabase
 import pymongo
+from bson import SON
+from datetime import datetime, timedelta
+from src.models import *
 
 neo4j_driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "root"))
 # client = pymongo.MongoClient(
@@ -158,7 +162,8 @@ class MapRepository:
     def _shortest_path(tx, start_station, stop_station):
         result = tx.run(
             '''
-            MATCH (start:SubwayStation{station_name: $start_name}), (end:SubwayStation{station_name:$stop_name})
+            MATCH (start:SubwayStation{station_name: $start_name, entrances: $start_entrance}),
+             (end:SubwayStation{station_name:$stop_name, entrances: $stop_entrance})
             CALL gds.alpha.kShortestPaths.stream({
                 nodeQuery: 'MATCH(n:SubwayStation) RETURN id(n) AS id',
                 relationshipQuery:'MATCH(n:SubwayStation)-[r]-(m:SubwayStation) RETURN id(n) AS source, id(m) AS target,
@@ -173,7 +178,9 @@ class MapRepository:
             RETURN path
             ''',
             start_name=start_station.station_name,
-            stop_name=stop_station.station_name
+            stop_name=stop_station.station_name,
+            start_entrance=start_station.entrances,
+            stop_entrance=stop_station.entrances
         )
         return [x for x in result]
 
@@ -361,7 +368,6 @@ class ScheduleRepository:
     def __init__(self):
         self.collection = collection
 
-
     def get_schedules_by_line(self, line):
         schedules = []
         x = str(line)
@@ -371,10 +377,92 @@ class ScheduleRepository:
         )
         return result
 
+    def get_next_train_by_station_name_and_line(self, start_station_name, end_station_name, line, time):
+        # TODO
+        # Fix method to ensure correct station order
+        pipeline = [
+            {
+                "$match":
+                    {
+                        "$expr": {"$gt": ["$Schedule.{}".format(end_station_name),
+                                          "$Schedule.{}".format(start_station_name)]},
+                        "Line": line,
+                        "Schedule.{}".format(start_station_name): {"$gte": time},
+                        # "Schedule.{}".format(end_station_name): {"$gte": time+timedelta(minutes=1)},
+                    }
+            },
+            {
+                "$sort": SON([("Schedule.{}".format(start_station_name), 1)])
+            },
+            {
+                "$limit": 1
+            }
+        ]
+        result = self.collection.aggregate(pipeline=pipeline)
+        return result
+
+    def delay_train(self, schedule: Schedule, station_name: str, delay: timedelta) -> Schedule:
+        update = \
+            {
+                "$set":
+                    {
+                        "Delay":
+                            {
+                                "start": station_name,
+                                "time": int(delay.seconds/60)
+                            }
+                    }
+            }
+        for stop in schedule.schedule:
+            if schedule.schedule[station_name] < schedule.schedule[stop]:
+                update["$set"]["Schedule.{}".format(stop)] = schedule.schedule[stop] + delay
+        result = self.collection.update(
+            {
+                "Line": schedule.line,
+                "Direction": schedule.direction,
+                "Schedule.{}".format(station_name): {"$eq": schedule.schedule[station_name]}
+            },
+            update
+
+        )
+
+        return result
+
+    def remove_delay(self, schedule: Schedule):
+        update = \
+            {
+                "$set":{
+                        # Reset times to pre-delay
+                    },
+                "$unset": { "Delay": ""} # Remove delay property
+            }
+        start = schedule.delay['start']
+        delay = schedule.delay['time']
+        for stop in schedule.schedule:
+            if schedule.schedule[start] < schedule.schedule[stop]:
+                update["$set"][stop] = schedule.schedule[stop] - timedelta(minutes=delay)
+        result = self.collection.update(
+            {
+                "Line": schedule.line,
+                "Direction": schedule.direction,
+                "Schedule.{}".format(start): {"$eq": schedule.schedule[start]}
+            },
+            update
+        )
+        return result
+
 
     def bulk_insert_schedules(self, schedules):
-        self.collection.insert_many()
-
+        """
+        Bulk inserts schedule documents into the Schedule collection
+        :param schedules: an array of schedule documents
+        :return: None
+        """
+        self.collection.insert_many(schedules)
 
     def clear_db(self):
-        collection.delete_many({})
+        """
+        Clears out the Schedule collection
+        :return: None
+        """
+        self.collection.delete_many({})

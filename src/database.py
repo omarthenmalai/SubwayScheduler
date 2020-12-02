@@ -7,6 +7,7 @@ import numpy as np
 from os import walk
 from os import listdir
 from os.path import isfile, join
+from datetime import datetime
 
 # Local imports
 from src.models import SubwayStation, TrainLine, Schedule
@@ -59,33 +60,45 @@ def init_schedule_db():
     schedule_repository = ScheduleRepository()
     schedule_repository.clear_db()
 
-    onlyfiles = [f for f in listdir('Trains') if isfile(join('Trains', f))]
-
+    onlyfiles = ['{}/{}'.format('Trains', f) for f in listdir('Trains') if isfile(join('Trains', f))]
     filtered = list(filter(lambda k: 'csv' in k, onlyfiles))
 
     for i in range(len(filtered)):
         filename = str(filtered[i])
-        df = pd.read_csv('Trains/1-train-forward.csv')
+        df = pd.read_csv(filename)
+        df.dropna(inplace=True)
         stations = df.columns.values.tolist()
-
-        split_file_name = filename.split('-')
+        stations = [' '.join(station.rstrip().split(" ")[:-1]) for station in stations]
+        split_file_name = filename.split('/')[1].split('-')
 
         line = str(split_file_name[0])
         direction = str(split_file_name[-2])
         direction = direction + '-bound'
 
-        print(line)
-        print(direction)
-
         documents_array = []
 
         for index, row in df.iterrows():
-            test_keys = stations
-            test_values = row
-            res = {test_keys[i]: test_values[i] for i in range(len(test_keys))}
-            # res['Line'] = line
-            # res['Direction'] = direction
-
+            values = row.values
+            good_indices = [i for i in range(0, len(values)) if values[i] != "—" and values[i] != np.nan
+                            and values[i] != "-"]
+            try:
+                times = [values[i].rstrip()\
+                             .replace("#", '')\
+                             .replace("*", "")\
+                             .replace("+", "")\
+                             .replace("^", "")\
+                             .lstrip()\
+                             .rstrip() for i in good_indices]
+                # times = [int(time.split(":")[0])*100 + int(time.split(":")[1]) for time in times]
+            except (IndexError, ValueError) as e:
+                print(e)
+                continue
+            curr_stations = [stations[i] for i in good_indices]
+            try:
+                res = {curr_stations[i]: datetime.strptime(times[i], "%H:%M") for i in range(len(curr_stations))}
+                # res = {curr_stations[i]: times[i] for i in range(len(curr_stations))}
+            except ValueError:
+                continue
             train = {
                 "Line": line,
                 "Direction": direction,

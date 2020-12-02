@@ -248,47 +248,64 @@ class Schedule:
     def __init__(self,
                  line: str = None,
                  direction: str = None,
-                 schedule: [] = None):
-        self.line = line
-        self.direction = direction
-        self.schedule = schedule
+                 schedule: {} = None,
+                 delay: {} = None):
+        self._line = line
+        self._direction = direction
+        self._schedule = schedule
+        self._delay = delay
 
     @property
     def line(self):
-        return self.line
+        return self._line
 
     @line.setter
     def line(self, value):
-        self.line = value
+        self._line = value
         return self
 
     @property
     def direction(self):
-        return self.direction
+        return self._direction
 
     @direction.setter
     def direction(self, value):
-        self.direction = value
+        self._direction = value
         return self
 
     @property
     def schedule(self):
-        return self.schedule
+        return self._schedule
 
     @schedule.setter
     def schedule(self, value):
-        self.schedule = value
+        self._schedule = value
+        return self
+
+    @property
+    def delay(self):
+        return self._delay
+
+    @delay.setter
+    def delay(self, value):
+        self._delay = value
         return self
 
     @classmethod
-    def from_mongo(cls, query: {}) -> Schedule:
+    def from_mongo(cls, query: {}):
         '''
         Creates a Schedule object from Mongo query result
+        :param query: dict output
         :param schedule: a Mongo db querey result
         :return: A SubwayStation object with properties equal to the property of the node
         '''
+        try:
+            delay = query['Delay']
+        except KeyError:
+            delay = None
         return cls(
             line=query['Line'],
             direction=query['Direction'],
-            schedule=query['Schedule']
+            schedule=query['Schedule'],
+            delay=delay
         )

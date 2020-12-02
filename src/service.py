@@ -1,8 +1,10 @@
+from __future__ import annotations
 from src.repository import *
 from src.models import *
 import pandas as pd
 import numpy as np
 import itertools
+from datetime import datetime, timedelta
 
 
 class MapService:
@@ -53,7 +55,61 @@ class MapService:
         for t in itertools.product(*lines):
             paths.append(t)
 
-        return paths
+        path_df = MapService._calculate_shortest_path(stations, paths)
+
+        return path_df
+
+    @staticmethod
+    def _calculate_shortest_path(stations, paths):
+        schedule_service = ScheduleService()
+
+        fastest_path = paths[0]
+        fastest_time_taken = timedelta(minutes=100000)
+        fastest_path_times = []
+        # start_time = datetime.now().replace(year=1900,  month=1, day=1)
+        start_time = datetime(year=1900, month=1, day=1, hour=19, minute=23)
+        for path in paths:
+            # time = datetime.now().replace(year=1900, month=1, day=1, hour=19, minute=23)
+            time = start_time
+            path_times = [time]
+            for i in range(0, len(path)):
+                cur_start_station = stations[i]
+                cur_end_station = stations[i + 1]
+
+                # Fix path: temporary fix until we deal with express pathing later
+                curr_path = path[i]
+                if path[i] == "7X":
+                    curr_path = "7"
+                elif path[i] == "6X":
+                    curr_path = "6"
+
+                # Get the schedule with the desired departure and arrival time
+                sched = schedule_service.get_next_train_by_station_name_and_line(cur_start_station,
+                                                                                 cur_end_station,
+                                                                                 curr_path,
+                                                                                 time)
+                if len(sched) == 0:
+                    print("ERROR: Couldn't Resolve the current path --> {}".format(path))
+                    break
+
+                final_station = sched['Schedule'][cur_end_station.station_name]
+                time = final_station
+                path_times.append(time)
+
+            if time - start_time < fastest_time_taken:
+                fastest_time_taken = time - start_time
+                fastest_path = path
+                fastest_path_times = path_times
+
+        stations = np.array([name.station_name for name in stations]).T
+        fastest_path_times = np.array(fastest_path_times).T
+        fastest_path = [fastest_path[i] for i in range(len(fastest_path))]
+        fastest_path.append("")
+        fastest_path = np.array(fastest_path).T
+
+        output = pd.DataFrame(np.column_stack((stations, fastest_path, fastest_path_times)),
+                              columns=['Station', 'Line', 'Times'])
+        return output
 
     def get_station_by_station_name(self,
                                     station_name: str):
@@ -227,7 +283,7 @@ class ScheduleService:
         self.repository = ScheduleRepository()
 
     def get_schedules_by_line(self,
-                               line: Schedule):
+                              line: str):
         result = self.repository.get_schedules_by_line(line)
         array = []
 
@@ -235,3 +291,25 @@ class ScheduleService:
             array.append(Schedule.from_mongo(record))
 
         return array
+
+    def get_next_train_by_station_name_and_line(self, start_station, end_station, line, time):
+        result = self.repository.get_next_train_by_station_name_and_line(start_station.station_name,
+                                                                         end_station.station_name,
+                                                                         line,
+                                                                         time)
+        result = [res for res in result][0]
+        return result
+
+    def delay_train(self, schedule: Schedule, station_name: str, delay: timedelta):
+        if schedule.delay is not None:
+            self.remove_delay(schedule=schedule)
+        result = self.repository.delay_train(schedule=schedule, station_name=station_name, delay=delay)
+        return result
+
+    def remove_delay(self, schedule: Schedule):
+        if schedule.delay is None:
+            print("ERROR: Current train does not have a delay to remove")
+            return None
+        else:
+            result = self.repository.remove_delay(schedule=schedule)
+            return result
