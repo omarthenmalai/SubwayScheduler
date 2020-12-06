@@ -29,7 +29,7 @@ def confirm_password(username:str, password_to_check: str):
 	result = list(filter(lambda person: person['username'] == username, database))[0]
 	storage = result['password']
 	print(password_to_check)
-
+	print(len(storage))
 	salt_from_storage = storage[:32] # 32 is the length of the salt
 	key_from_storage = storage[32:]
 	new_key = hashlib.pbkdf2_hmac(

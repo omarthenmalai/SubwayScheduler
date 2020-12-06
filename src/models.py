@@ -3,20 +3,34 @@ from sqlalchemy import create_engine, Integer, Float, String, Column, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from neo4j.graph import Node
 import numpy as np
+from sqlalchemy import create_engine, Integer, String, Column, Date, ForeignKey, \
+    PrimaryKeyConstraint, func, desc, MetaData, Table
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, backref, relationship
+from sqlalchemy.ext.declarative import as_declarative
+from sqlalchemy.types import LargeBinary
 
 Base = declarative_base()
 
-
 class User(Base):
-    __tablename__ = 'users'
+	__tablename__ = 'users'
 
-    user_id = Column(Integer, primary_key=True)  # User ID
-    email = Column(String(50))
-    password = Column(String(128))
+	user_id = Column(Integer, primary_key=True)
+	email = Column(String(50))
+	password = Column(LargeBinary())
+	is_admin = Column(Integer)
 
-    def __repr__(self):
-        return "<User(user_id={0}, email={1}, password={2}>".format(self.user_id, self.email, self.password)
-
+	'''
+	def __repr__(self):
+		obj = {
+			'user_id': self.user_id,
+			'email': self.email,
+			'password': self.password,
+			'is_admin': self.is_admin
+		}
+		#return "<User(user_id={0}, email={1}, password={2})>".format(self.user_id, self.email, self.password)
+		return "{0},{1},{2},{3}".format(self.user_id, self.email, self.password, self.is_admin)
+	'''
 
 class Administrator(Base):
     __tablename__ = 'administrators'
