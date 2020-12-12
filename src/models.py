@@ -1,5 +1,5 @@
 from __future__ import annotations
-from sqlalchemy import create_engine, Integer, Float, String, Column, ForeignKey, PrimaryKeyConstraint, func, text, desc
+from sqlalchemy import Integer, String, Column, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from neo4j.graph import Node
 import numpy as np
@@ -41,7 +41,8 @@ class SubwayStation:
                  lines: list = None,
                  status: str = None,
                  latitude: float = None,
-                 longitude: float = None) -> SubwayStation:
+                 longitude: float = None,
+                 id: int = None) -> SubwayStation:
         self._station_name = station_name
         self._entrances = entrances
         self._lines = lines
@@ -49,6 +50,7 @@ class SubwayStation:
         self._borough = borough
         self._latitude = latitude
         self._longitude = longitude
+        self._id = id
 
     @property
     def station_name(self):
@@ -113,12 +115,13 @@ class SubwayStation:
         self._longitude = value
         return self
 
-    def append_line(self, line):
-        self._lines.append(line)
-        return self
+    @property
+    def id(self):
+        return self._id
 
-    def remove_line(self, line):
-        self._lines = [x for x in self._lines if x != line]
+    @id.setter
+    def id(self, value):
+        self._id = value
         return self
 
     @classmethod
@@ -135,7 +138,8 @@ class SubwayStation:
             lines=node['lines'],
             status=node['status'],
             latitude=node['latitude'],
-            longitude=node['longitude']
+            longitude=node['longitude'],
+            id=node.id
         )
 
     @classmethod
@@ -164,16 +168,6 @@ class SubwayStation:
             longitude=row['longitude']
         )
 
-    def to_dict(self):
-        return {
-            "station_name": self.station_name,
-            "borough": self.borough,
-            "entrances": self.entrances,
-            "lines": self.lines,
-            "status": self.status,
-            "latitude": self.latitude,
-            "longitude": self.longitude
-        }
 
     def __eq__(self, other: SubwayStation) -> bool:
         '''
@@ -190,8 +184,8 @@ class SubwayStation:
             return False
 
     def __repr__(self):
-        return "<SubwayStation(station_name={0}, borough={1}, entrances={2}, lines={3}, status={4})>" \
-            .format(self.station_name, self.borough, self.entrances, self.lines, self.status)
+        return "<SubwayStation(station_name={0}, borough={1}, entrances={2}, lines={3}, status={4}, id={5})>" \
+            .format(self.station_name, self.borough, self.entrances, self.lines, self.status, self._id)
 
 
 class TrainLine:
@@ -308,4 +302,19 @@ class Schedule:
             direction=query['Direction'],
             schedule=query['Schedule'],
             delay=delay
+        )
+
+
+class ScheduledTrip(Base):
+    __tablename__ = "scheduledtrips"
+
+    id = Column(Integer, primary_key=True)
+    start_station = Column(String(100))
+    end_station = Column(String(100))
+    date = Column(DateTime)
+
+    def __repr__(self):
+        return (
+            "<ScheduledTrip(id={}, start_station={}, end_station={}, date={})>"
+                .format(self.id, self.start_station, self.end_station, self.date)
         )

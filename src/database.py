@@ -12,7 +12,7 @@ from datetime import datetime
 # Local imports
 from src.models import SubwayStation, TrainLine, Schedule
 from src.service import MapService, ScheduleService
-from src.repository import ScheduleRepository
+from src.repository import ScheduleRepository, MapRepository
 
 """
 Lexington Av/63rd St == Lexington Av/59th St
@@ -23,6 +23,8 @@ Broadway-Lafayette St == Bleecker St
 
 def init_map_db():
     # Initialize MapService to add the SubwayStations and CONNECTS relationships
+    map_repo = MapRepository()
+    map_repo.clear_db()
     map_service = MapService()
 
     total_nodes = 0
@@ -39,6 +41,15 @@ def init_map_db():
         for index in range(0, len(df)):
             row = df.loc[index]
             subway_station = SubwayStation.from_csv_row(row)
+            subway_station.lines = [line for line in subway_station.lines if line != ""]
+            if subway_station.station_name == "World Trade Center":
+                subway_station.lines = "1,2,3,A,C,E,N,Q,R,W".split(",")
+            elif subway_station.station_name == "Bleecker St":
+                subway_station.lines = "4,6,6X,B,D,F,M".split(",")
+            elif subway_station.station_name == "45 St":
+                subway_station.lines = "N,R".split(",")
+            elif subway_station.station_name == "Whitehall St":
+                subway_station.lines = "N,Q,R,W".split(",")
             station_res = map_service.create_station(subway_station)
             if index > 0:
                 prev_row = df.loc[index - 1]

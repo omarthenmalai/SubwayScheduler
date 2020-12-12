@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <title>{{ line + " Line" }}</title>
+</head>
+<body>
+    <style> .navbar ul { list-style-type: none; }</style>
+    {{ nav.navbar.render() }}
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Station Name</th>
+                <th>Location</th>
+                <th>Borough</th>
+                <th>Status</th>
+                {% if user_type == "admin" %}
+                <th>
+                    Options
+                </th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for station in stations %}
+            <tr class="active-row">
+                <td>{{ station.station_name }}</td>
+                <td>{{ station.entrances }}</td>
+                <td>{{ station.borough }}</td>
+                <td>{{ station.status }}</td>
+                {% if user_type == "admin" %}
+                <td>
+                    <a href="{{ "/" ~ line ~ "/" ~ station.station_name ~ "/" ~ station.entrances}}">
+                        Change Status
+                    </a>
+                </td>
+                {% endif %}
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

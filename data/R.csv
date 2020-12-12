@@ -2,41 +2,41 @@ station_name,borough,entrance,lines,latitude,longitude
 Forest Hills - 71 Av,Queens,107-48 Queens Blvd,"E,F,M,R",40.72128145,-73.84471342325449
 67 Av,Queens,101-02 Queens Blvd,"E,M,R",40.7262803,-73.8527601
 63 Dr - Rego Park,Queens,96-22 Queens Blvd,"E,M,R",40.7295739,-73.861816
-Woodhaven Blvd,Queens,Horace Harding Expressway,"E,M,R",40.737901,-73.798231
+Woodhaven Blvd,Queens,Horace Harding Expressway,"E,M,R",40.7386037,-73.7964277
 Grand Av - Newtown,Queens,86-57 Broadway,"E,M,R",40.7372828,-73.877193
 Elmhurst Av,Queens,82-23 Broadway,"E,M,R",40.742737,-73.8822399
-Jackson Hts - Roosevelt Av - 74 St,Queens,74-02 Roosevelt Avenue,"E,F,M,R,7",40.7585475,-73.8332175
+Jackson Hts - Roosevelt Av - 74 St,Queens,74-02 Roosevelt Avenue,"E,F,M,R,7",40.749376,-73.867514
 65 St,Queens,64-01 Broadway,"E,M,R",40.749908399999995,-73.89844137947821
 Northern Blvd,Queens,55-02 Broadway,"E,M,R",40.7526401,-73.9058416
 46 St,Queens,47-07 Broadway,"E,M,R",40.7563565,-73.9131455
 Steinway St,Queens,32-84 Steinway Street,"E,M,R",40.7569454,-73.9208434
-36 St,Queens,35-01 Northern Blvd,"E,M,R",40.7626249,-73.8369914
+36 St,Queens,35-01 Northern Blvd,"E,M,R",40.7626853,-73.8343068
 Queens Plaza,Queens,Jackson Avenue,"E,M,R",40.7424879,-73.9527805
-Lexington Av / 59 St,Manhattan,743 Lexington Avenue,"F,N,Q,R,4,5,6",40.7624849,-73.9678233
+Lexington Av / 59 St,Manhattan,743 Lexington Ave,"4,5,6,F,N,Q,R",40.7624849,-73.9678233
 5 Av/59 St,Manhattan,Grand Army Plaza,"N,Q,R",40.7643796,-73.97337386360579
 57 St - 7 Av,Manhattan,7th Avenue,"N,Q,R",40.762862,-73.981637
 49 St,Manhattan,721 7th Avenue,"N,Q,R",40.7599016,-73.9839117
 Times Sq - 42 St,Manhattan,7 West 42nd Street,"N,Q,R,S,1,2,3,7,7x",40.7557653,-73.9867599
-34 St - Herald Sq,Manhattan,Avenue of the Americas,"B,D,F,M,N,Q,R",40.7490662,-73.9882979
+34 St - Herald Sq,Manhattan,Avenue of the Americas,"B,D,F,M,N,Q,R",40.7435682,-73.9923179
 28 St,Manhattan,1185 Broadway,"N,Q,R",40.745545,-73.9888325
 23 St,Manhattan,949 Broadway,"N,Q,R",40.7410206,-73.9895356
 Union Sq - 14 St,Manhattan,East 14th Street,"4,5,6,6x,L,N,Q,R,W",40.7294404,-73.9780305
 8 St - Nyu,Manhattan,755A Broadway,"N,Q,R",40.7304238,-73.9927478
-Prince St,Manhattan,575 Broadway,"N,Q,R",40.7245413,-73.9977384
-Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,6",40.7187615,-74.0006954
-City Hall,Manhattan,256 Broadway,"N,R",40.7134311,-74.0071432
-Wtc - Cortlandt,Manhattan,19 Church Street,1,40.7106227,-74.0108547
-Rector St,Manhattan,33 Trinity Place,"N,R",40.707121,-74.0132203
+Prince St,Manhattan,575 Broadway,"N,Q,R",40.7244716,-73.99785
+Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,4,6",40.7187615,-74.0006954
+City Hall,Manhattan,256 Broadway,"N,Q,R",40.7134311,-74.0071432
+World Trade Center,Manhattan,79 Church St,"1,2,3,A,C,E,N,Q,R,",40.7124205,-74.0096888
+Rector St,Manhattan,33 Trinity Place,"N,Q,R",40.707121,-74.0132203
 Whitehall St,Manhattan,2 Water St,"N,R,W",40.7027979,-74.012748
-Court St,Brooklyn,189 Montague Street,"N,R",40.6942001,-73.9916917
-Jay St - Metrotech,Brooklyn,55 Willoughby Street,"A,C,F,R",40.6923089,-73.9867358
+Court St,Brooklyn,189 Montague Street,"N,Q,R",40.6942001,-73.9916917
+Jay St - Metrotech,Brooklyn,55 Willoughby Street,"A,C,F,N,Q,R",40.6923089,-73.9867358
 Dekalb Av,Brooklyn,340 Flatbush Ave Extension,"B,D,N,Q,R",40.6904891,-73.98211752313367
-Atlantic Av - Barclays Ctr,Brooklyn,590 Atlantic Ave,"B,D,N,Q,R,2,3,4,5",40.6808474,-73.8748891
+Atlantic Av - Barclays Ctr,Brooklyn,590 Atlantic Ave,"B,D,N,Q,R,2,3,4,5",40.6768467,-73.8895003
 Union St,Brooklyn,215 4 Ave,"D,N,R",40.670272,-73.989779
 4 Av - 9 St,Brooklyn,250 9th Street,"D,F,N,R,G",40.670289999999994,-73.9891634663332
-Prospect Av,Brooklyn,591 4 Ave,"D,N,R",40.58909066666667,-73.9645675
+Prospect Av,Brooklyn,591 4 Ave,"D,N,R",40.670272,-73.989779
 25 St,Brooklyn,751 4th Avenue,"D,N,R",40.6602561,-73.9979263
-36 St,Brooklyn,926 4 Ave,"D,N,R",40.58931075167785,-73.96105002684564
+36 St,Brooklyn,926 4 Ave,"D,N,R",40.670272,-73.989779
 45 St,Brooklyn,4523 4th Avenue,R,40.6487719,-74.0098762
 53 St,Brooklyn,5213 4 Ave,"N,R",40.670272,-73.989779
 59 St,Brooklyn,5901 4 Ave,"N,R",40.670272,-73.989779

@@ -1,35 +1,35 @@
 station_name,borough,entrance,lines,latitude,longitude
 New Lots Av,Brooklyn,889 Livonia Avenue,"2,3,4,5",40.6664021,-73.8839262
-Van Siclen Av,Brooklyn,745 Livonia Ave,"2,3,4,5",40.665559,-73.889244
+Van Siclen Av,Brooklyn,745 Livonia Ave,"2,3,4,5",40.6637042,-73.9004923
 Pennsylvania Av,Brooklyn,602 Livonia Ave,"2,3,4,5",40.6645081,-73.8947007
 Junius St,,,"2,3,4,5",40.7127281,-74.0060152
 Rockaway Av,Brooklyn,710 Rockaway Ave,"2,3,4,5",40.6624117,-73.9090237
 Saratoga Av,Brooklyn,297 Legion Street,"2,3,4,5",40.6613281,-73.9162747
 Sutter Av - Rutland Rd,Brooklyn,80 E 98 St,"2,3,4,5",,
-Crown Hts - Utica Av,Brooklyn,1074 Eastern Pkwy,"2,3,4,5",40.668404249999995,-73.93299120162037
-Kingston Av,Brooklyn,291 Kingston Ave,"2,3,4,5",40.669885666666666,-73.94204066666666
+Crown Hts - Utica Av,Brooklyn,1074 Eastern Pkwy,"2,3,4,5",40.66840425,-73.9329912
+Kingston Av,Brooklyn,291 Kingston Ave,"2,3,4,5",40.6694074,-73.9421829
 Nostrand Av,Brooklyn,540 Eastern Pkwy,"2,3,4,5",40.6694519,-73.9503949
 Franklin Av,Brooklyn,806 Franklin Avenue,"S,2,3,4,5",40.6703139,-73.9582584
 Eastern Pkwy - Brooklyn Museum,Brooklyn,135 Eastern Pkwy,"2,3,4",40.6723244,-73.9641423
 Grand Army Plaza,Brooklyn,10 Plaza St E,"2,3,4",40.6756128,-73.9708948
 Bergen St,Brooklyn,243 Flatbush Avenue,"2,3,4",40.6809387,-73.9749616
-Atlantic Av - Barclays Ctr,Brooklyn,590 Atlantic Ave,"B,D,N,Q,R,2,3,4,5",40.6808474,-73.8748891
-Nevins St,Brooklyn,1 Flatbush Avenue,"2,3,4,5",40.6882763,-73.98016939053673
+Atlantic Av - Barclays Ctr,Brooklyn,590 Atlantic Ave,"B,D,N,Q,R,2,3,4,5",40.6768467,-73.8895003
+Nevins St,Brooklyn,1 Flatbush Avenue,"2,3,4,5",40.6882763,-73.98016939
 Hoyt St,Brooklyn,464 Fulton St,"2,3",40.6901914,-73.9845611
 Borough Hall,Brooklyn,Joralemon Street,"2,3,4,5,N,R,W",40.6922025,-73.989211
 Clark St,Brooklyn,80 Clark Street,"2,3",40.6974111,-73.9932001
 Wall St,Manhattan,52 William Street,"2,3",40.7067993,-74.0089458
 Fulton St,Manhattan,139 Fulton St,"A,C,N,R,W,J,Z,2,3,4,5",40.7103635,-74.0077635
-Park Place Station,Manhattan,110 Church Street,"2,3",40.7135073,-74.009269
-Chambers St,Manhattan,Chambers Street,"1,2,3",40.7149161,-74.0079676
+World Trade Center,Manhattan,79 Church St,"1,2,3,A,C,E,N,Q,R,W",40.7124205,-74.0096888
+Chambers St,Manhattan,Chambers Street,"1,2,3",40.7155081,-74.0092451
 14 St,Manhattan,37 7th Avenue,"1,2,3",40.7376789,-74.0001842
 34 St - Penn Station,Manhattan,421 7th Avenue,"1,2,3",40.7503743,-73.9908121
 Times Sq - 42 St,Manhattan,7 West 42nd Street,"N,Q,R,S,1,2,3,7,7x",40.7557653,-73.9867599
 72 St,Manhattan,2073 Broadway,"1,2,3",40.7785184,-73.9822822
 96 St,Manhattan,250 West 95th Street,"1,2,3",40.7939883,-73.9725479
 Central Park North (110 St),Manhattan,20 Malcolm X Boulevard,"2,3",40.7989993,-73.9515546
-116 St,Manhattan,West 116th Street,"2,3",40.8061667,-73.9594936
-125 St,Manhattan,86 W 125 St,"2,3",40.8043494,-73.937411
-135 St,Manhattan,515 Malcolm X Blvd,"2,3",40.8053126,-73.9473933
+116 St,Manhattan,West 116th Street,"2,3",40.8047284,-73.9560999
+125 St,Manhattan,86 W 125 St,"2,3",40.7545325,-73.18636107
+135 St,Manhattan,515 Malcolm X Blvd,"2,3",40.8134711,-73.9414254
 145 St,Edgewater,Malcolm X Boulevard,3,,
-Harlem - 148 St,Manhattan,2569 Adam Clayton Powell Jr. Boulevard,3,40.8235095,-73.93657036991286
+Harlem - 148 St,Manhattan,2569 Adam Clayton Powell Jr. Boulevard,3,40.8235095,-73.93657037

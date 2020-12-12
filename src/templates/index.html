@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/plan_trip.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet"/>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+</head>
+<body>
+    <style> .navbar ul { list-style-type: none; }</style>
+    {{ nav.navbar.render() }}
+
+    <div class="content-section">
+        <h2>
+            Plan a Trip
+        </h2>
+        <form method="GET" action="/plan_trip">
+            <label>
+                Starting Station:
+            </label>
+            <select name="start_station" class="js-example-basic-single">
+            {% for station in stations %}
+              <option value= "{{ station.station_name, station.entrances }}">
+                  <column>{{ station.station_name }},</column>
+                  <column>&nbsp{{ station.entrances }}</column>
+              </option>
+            {% endfor %}
+            </select>
+            <label>
+                Ending Station:
+            </label>
+            <select name="end_station" class="js-example-basic-single">
+            {% for station in stations %}
+              <option value="{{ station.station_name, station.entrances }}">
+                  <column>{{ station.station_name }},</column>
+                  <column>&nbsp{{ station.entrances }}</column>
+              </option>
+            {% endfor %}
+            </select>
+            <input type="submit" value="Schedule">
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+            });
+    </script>
+</body>
+
+</html>

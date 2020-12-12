@@ -40,10 +40,11 @@ class MapRepository:
                         borough: $borough, 
                         entrances: $entrances, 
                         lines: $lines,
-                        status: $status,
-                        latitude: $latitude,
-                        longitude: $longitude
+                        status: $status
                     }) 
+                    SET s.latitude = $latitude
+                    SET s.longitude = $longitude
+                    
                     RETURN s
             ''',
             station_name=station.station_name,
@@ -65,9 +66,9 @@ class MapRepository:
     def _get_stations_by_line(tx, line):
         result = tx.run(
             '''
-            MATCH (s:SubwayStation)
-            WHERE $line in s.lines
-            RETURN s
+            MATCH path=(a:SubwayStation)-[r]->()
+            WHERE $line = r.line
+            RETURN nodes(path) as nodes
             ''',
             line=line
         )
@@ -88,6 +89,40 @@ class MapRepository:
             station_name=station_name
         )
         return [x for x in result]
+
+    def get_station_by_name_and_entrance(self, station_name, entrance):
+        with neo4j_driver.session() as s:
+            transact = s.write_transaction(self._get_station_by_name_and_entrance, station_name, entrance)
+        return transact
+
+    @staticmethod
+    def _get_station_by_name_and_entrance(tx, station_name, entrance):
+        result = tx.run(
+            '''
+            MATCH (s:SubwayStation{station_name: $station_name, entrances: $entrance})
+            RETURN s
+            ''',
+            station_name=station_name,
+            entrance=entrance
+        )
+        return result.single()
+
+    def get_station_by_id(self, id):
+        with neo4j_driver.session() as s:
+            transact = s.write_transaction(self._get_station_by_id, id)
+        return transact
+
+    @staticmethod
+    def _get_station_by_id(tx, id):
+        result = tx.run(
+            '''
+            MATCH(s:SubwayStation)
+            WHERE ID(s) = $id
+            RETURN s
+            ''',
+            id=id
+        )
+        return result
 
     def create_connection(self, train_line):
         """
@@ -193,26 +228,9 @@ class MapRepository:
     def _all_stations(tx):
         result = tx.run(
             '''
-            MATCH (a:SubwayStation) 
-            REtURN a
+            MATCH (s:SubwayStation) 
+            REtURN s
             '''
-        )
-        return [x for x in result]
-
-    def stations_by_line(self, line):
-        with neo4j_driver.session() as s:
-            transact = s.write_transaction(self._stations_by_line, line)
-        return transact
-
-    @staticmethod
-    def _stations_by_line(tx, line):
-        result = tx.run(
-            '''
-            MATCH (a:SubwayStation)
-            WHERE $line in a.lines  
-            REtURN a
-            ''',
-            line=line
         )
         return [x for x in result]
 
@@ -347,12 +365,23 @@ class MapRepository:
         with neo4j_driver.session() as s:
             result = s.run(
                 '''
-                MATCH (s:SubwayStation)
-                WHERE $line in s.lines
-                AND NOT (s)-[:CONNECTS{line:$line}]-()
+                MATCH (s:SubwayStation)-[r]-()
+                WHERE r.line IN s.lines
                 RETURN s
                 ''',
                 line=line
+            )
+            return [x for x in result]
+
+    @staticmethod
+    def get_distinct_lines():
+        with neo4j_driver.session() as s:
+            result = s.run(
+                '''
+                MATCH ()-[r]-()
+                WITH DISTINCT r.line AS lines
+                return lines
+                '''
             )
             return [x for x in result]
 
@@ -409,7 +438,7 @@ class ScheduleRepository:
                         "Delay":
                             {
                                 "start": station_name,
-                                "time": int(delay.seconds/60)
+                                "time": int(delay.seconds / 60)
                             }
                     }
             }
@@ -431,16 +460,16 @@ class ScheduleRepository:
     def remove_delay(self, schedule: Schedule):
         update = \
             {
-                "$set":{
-                        # Reset times to pre-delay
-                    },
-                "$unset": { "Delay": ""} # Remove delay property
+                "$set": {
+                    # Reset times to pre-delay
+                },
+                "$unset": {"Delay": ""}  # Remove delay property
             }
         start = schedule.delay['start']
         delay = schedule.delay['time']
         for stop in schedule.schedule:
             if schedule.schedule[start] < schedule.schedule[stop]:
-                update["$set"][stop] = schedule.schedule[stop] - timedelta(minutes=delay)
+                update["$set"]["Schedule.{}".format(stop)] = schedule.schedule[stop] - timedelta(minutes=delay)
         result = self.collection.update(
             {
                 "Line": schedule.line,
@@ -451,6 +480,13 @@ class ScheduleRepository:
         )
         return result
 
+    def get_delays(self):
+        result = self.collection.find(
+            {
+                "Delay": {"$exists": True}
+            }
+        )
+        return result
 
     def bulk_insert_schedules(self, schedules):
         """

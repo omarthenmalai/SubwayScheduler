@@ -1,7 +1,7 @@
 station_name,borough,entrance,lines,latitude,longitude
-Euclid Av,Brooklyn,2702 Pitkin Ave,"A,C",40.675245625,-73.87243649999999
+Euclid Av,Brooklyn,2702 Pitkin Ave,"A,C",40.6684412,-73.9191926
 Shepherd Av,Brooklyn,2482 Pitkin Avenue,"A,C",40.6740256,-73.8806297
-Van Siclen Av,Brooklyn,2222 Pitkin Ave,"A,C",40.672602222222224,-73.89051877777779
+Van Siclen Av,Brooklyn,2222 Pitkin Ave,"A,C",40.6684412,-73.9191926
 Liberty Av,Brooklyn,138 Pennsylvania Ave,"A,C",40.67448965,-73.89694275
 Broadway Jct,Brooklyn,2399 Fulton Street,"A,C,J,L,Z",40.6782946,-73.9040846
 Rockaway Av,Brooklyn,2130 Fulton St,"A,C",40.67815725,-73.9119344979538
@@ -13,16 +13,16 @@ Franklin Av,Brooklyn,1128 Fulton Street,"A,C,S",40.6810674,-73.9559534
 Clinton - Washington Avs,Brooklyn,937 Fulton St,"A,C",40.6833864,-73.9657446
 Lafayette Av,Brooklyn,698 Fulton St,"A,C",40.685934,-73.9740013
 Hoyt - Schermerhorn Sts,Brooklyn,227 Schermerhorn St,"A,C,G",40.6886693,-73.9848908
-Jay St - Metrotech,Brooklyn,55 Willoughby Street,"A,C,F,R",40.6923089,-73.9867358
+Jay St - Metrotech,Brooklyn,55 Willoughby Street,"A,C,F,N,Q,R",40.6923089,-73.9867358
 High St,,,"A,C",40.7127281,-74.0060152
 Fulton St,Manhattan,139 Fulton St,"A,C,N,R,W,J,Z,2,3,4,5",40.7103635,-74.0077635
-Chambers St,Manhattan,Church Street,"A,C",40.716013,-74.0070959
+Chambers St,Manhattan,Church Street,"A,C",40.7127427,-74.0096613
 Canal St,Manhattan,1 Lispenard Street,"A,C,E",40.72064,-74.00497
 Spring St,Manhattan,188 Ave Of The Americas,"A,C,E",40.72620285,-74.00337636959794
-W 4 St,Manhattan,West 4th Street,"A,B,C,D,E,F,M",40.7295629,-73.9965691
+W 4 St,Manhattan,West 4th Street,"A,B,C,D,E,F,M",40.7355308,-74.0033399
 14 St - 8 Avenue,Manhattan,81 8th Avenue,"A,C,E,L",40.7399977,-74.0025703
-23 St,Manhattan,West 24th Street,"A,C,E",40.7502561,-74.0082754
-34 St - Penn Station,Manhattan,480 8th Avenue,"A,C,E",40.7449235,-73.9987549
+23 St,Manhattan,West 24th Street,"A,C,E",40.7497094,-74.0069476
+34 St - Penn Station,Manhattan,480 8th Avenue,"A,C,E",40.7641596,-73.9847413
 42 St - Port Authority Bus Terminal,Manhattan,661 8 Ave,"A,C,E",40.7398753,-74.0027381
 50 St,Manhattan,832 8 Ave,"A,C,E",40.7398753,-74.0027381
 59 St - Columbus Circle,Manhattan,Columbus Circle,"A,B,C,D,1",40.76808045,-73.98189744682783
@@ -30,12 +30,12 @@ W 4 St,Manhattan,West 4th Street,"A,B,C,D,E,F,M",40.7295629,-73.9965691
 81 St - Museum Of Natural History,,,"A,B,C",40.7127281,-74.0060152
 86 St,Manhattan,265 Central Park West,"A,B,C",40.7858014,-73.9691784
 96 St,Manhattan,2 W 96 St,"A,B,C",40.7943793,-73.9719996
-103 St,Manhattan,435 Central Park West,"A,B,C",40.7964664,-73.9613104
-Cathedral Pkwy (110 St),Manhattan,Frederick Douglass Circle,"A,B,C",40.800698,-73.9578873
+103 St,Manhattan,435 Central Park West,"A,B,C",40.7962841,-73.9615347
+Cathedral Pkwy (110 St),Manhattan,Frederick Douglass Circle,"A,B,C",40.8004581,-73.9584593
 116 St,Manhattan,2168 Frederick Douglass Blvd,"A,B,C",40.8049262,-73.9547747
 125 St,Manhattan,310 Saint Nicholas Avenue,"A,B,C,D",40.8109778,-73.9522114
 135 St,Manhattan,26 Edgecombe Avenue,"A,B,C",40.8177984,-73.9472318
 145 St,Manhattan,716 St Nicholas Ave,"A,B,C,D",40.8245457,-73.94398950606654
 155 St,Manhattan,889 Saint Nicholas Avenue,"A,C",40.8306967,-73.9416361
 163 St - Amsterdam Av,Manhattan,1033 St Nicholas Ave,"A,C",40.8358939,-73.940145
-168 St,Manhattan,West 168th Street,"A,C,1",40.84095,-73.9394804
+168 St,Manhattan,West 168th Street,"A,C,1",40.8410769,-73.9397546
