@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lines</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
+
+</head>
+<body>
+    <style> .navbar ul { list-style-type: none; }</style>
+    {{ nav.navbar.render() }}
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Line</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for line in lines %}
+            <tr class="active-row">
+                <td>{{ line }}</td>
+                <td>
+                    <a href={{ "lines?line=" ~ line }} action="GET">
+                        View Stops
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

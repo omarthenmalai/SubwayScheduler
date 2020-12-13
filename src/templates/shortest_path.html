@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/plan_trip.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
+
+
+</head>
+<body>
+    <style> .navbar ul { list-style-type: none; }</style>
+    {{ nav.navbar.render() }}
+    {% for train_line in train_lines %}
+    <p>
+        {{ train_line }}
+    </p>
+    {% endfor %}
+</body>
+</html>
