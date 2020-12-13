@@ -1,62 +1,62 @@
-from src.models import SubwayStation, TrainLine
-from src.service import MapService
-from src.repository import MapRepository
+from src.models import SubwayStation, TrainLine, Schedule, User
+from src.service import MapService, ScheduleService, UserService
+from src.repository import MapRepository, ScheduleRepository, UserRepository
 from src.database import init_map_db, init_schedule_db
 import matplotlib.pyplot as plt
-
-# Fully Mapped:
-# 1
-# 1 Express
-# 2
-# 2 Express
-# 4
-# 4 Express
-# 6
-# 6 Express
-
-# TODO:
-
-init_schedule_db()
+from datetime import datetime, timedelta
+import timeit
 
 
-# map_service = MapService()
-# map_repository = MapRepository()
+# init_schedule_db()
+# init_map_db()
+map_service = MapService()
+map_repository = MapRepository()
+schedule_repository = ScheduleRepository()
+schedule_service = ScheduleService()
 
-# print(map_repository.stations_with_line_without_relationship("4"))
-
-
-# stat = map_service.get_station_by_station_name("Liberty Av")
-
-# stations = map_service.get_stations_by_line("S")
-# longitude = [station.longitude for station in stations if isinstance(station.longitude, float)]
-# latitude = [station.latitude for station in stations if isinstance(station.longitude, float)]
-
-# reroute = map_service.get_station_by_station_name("Grand Central 42 St")
-# start = map_service.get_station_by_station_name("14 St-Union Sq")
-# stop = map_service.get_station_by_station_name("Woodlawn")
-#
-# map_service.set_station_status_out_of_order(reroute)
-#
-#
-# res = map_service.get_shortest_path(start, stop)
-# print(res)
-
-# Testing
 user_service = UserService()
-user_service.add_user('4', 'Patrick', 'wewfefdfd', 0)
 
-user_data = [{"user_id": 1, "email": "Fred Flinstone", "password": 13, "is_admin": 0},
-                 {"user_id": 2, "email": "Fred Flinstone", "password": 14, "is_admin": 0},
-				 {"user_id": 3, "email": "Patrick", "password": 14, "is_admin": 1},]
+user = User("omar.thenmalai@gmail.com", "123456", True)
+user_service.add_user(user)
 
-user_service.add_many_users(user_data)
+user_service.login_user("omar.thenmalai@gmail.com", "123456")
 
-query = user_service.get_user_by_email('Fred Flinstone')
 
-user_service.add_user('6', 'Whipper', 'efefefe', 0)
+# paths = [6, 6, 6, 2]
+# stations = ["a", "b", "c", "d", "e"]
+# MapService._simplify_paths(paths, stations)
 
-print(query)
-print(type(query))
+# temp = map_service.get_station_by_name_and_entrance("Eastchester - Dyre Av", "3812 Dyre Avenue")
+# start = map_service.get_station_by_name_and_entrance("Union Sq - 14 St", "East 14th Street")
+# map_service.set_station_status_out_of_order(start)
+# stop = map_service.get_station_by_name_and_entrance("Grand Central - 42 St", "107 E 42 St")
+# map_service.set_station_status_out_of_order(stop)
+#
+# map_service.set_station_status_normal(stop)
+#
+# map_service.get_stations_by_line("5")
 
-query2 = user_service.login_user('Whipper','efefefe')
-print(query2)
+# stop = map_service.get_station_by_name_and_entrance("86 St", "1280 Lexington Avenue")
+
+
+# path = map_service.get_shortest_path(start, stop)
+# print(path)
+
+# test = schedule_service.get_next_train_by_station_name_and_line(start_station=start,
+#                                                                 end_station=stop,
+#                                                                 line='6',
+#                                                                 time=datetime(year=1900, month=1,
+#                                                                               day=1, hour=19,
+#                                                                               minute=23))
+
+# test = Schedule.from_mongo(test)
+# schedule_service.remove_delay(schedule=test)
+
+
+# schedule_service.delay_train(test, start.station_name, delay=timedelta(minutes=10))
+
+# delays = schedule_service.get_delays()
+
+# print(delays)
+
+# schedule_service.get_next_train_by_station_name_and_line("Grand Central - 42 St", "5 Av", "7X")

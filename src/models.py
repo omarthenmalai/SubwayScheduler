@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, Integer, String, Column, Date, ForeignKey,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, backref, relationship
 from sqlalchemy.ext.declarative import as_declarative
-from sqlalchemy.types import LargeBinary
+from sqlalchemy.types import LargeBinary, Boolean
 
 Base = declarative_base()
 
@@ -17,9 +17,14 @@ class User(Base):
     __tablename__ = 'users'
 
     user_id = Column(Integer, primary_key=True)
-    email = Column(String(50))
+    email = Column(String(50), unique=True)
     password = Column(LargeBinary())
-    is_admin = Column(Integer)
+    is_admin = Column(Boolean, unique=False, default=False)
+
+    def __init__(self, email, password, is_admin):
+        self.email = email
+        self.password = password
+        self.is_admin = is_admin
 
     def __repr__(self):
         # obj = {

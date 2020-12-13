@@ -7,7 +7,7 @@ import itertools
 import os
 import hashlib
 from datetime import datetime, timedelta
-import pprint
+
 
 class MapService:
 
@@ -57,8 +57,6 @@ class MapService:
         for t in itertools.product(*lines):
             paths.append(t)
 
-
-
         path_df = MapService._calculate_shortest_path(stations, paths)
 
         return path_df
@@ -69,7 +67,7 @@ class MapService:
         new_path = []
         new_stations = [stations[0]]
         while j < len(path):
-            if path[j] != path[j-1]:
+            if path[j] != path[j - 1]:
                 new_path.append(path[j])
                 new_stations.append(stations[j])
             j += 1
@@ -183,7 +181,7 @@ class MapService:
                             start.append(SubwayStation.from_node(record['nodes'][0]))
                             stop.append(rerouted_station)
                             prev_reroute = rerouted_station
-                        elif i == len(reroutes)-1:
+                        elif i == len(reroutes) - 1:
                             start.append(prev_reroute)
                             stop.append(rerouted_station)
                             start.append(rerouted_station)
@@ -201,7 +199,6 @@ class MapService:
             else:
                 start.append(SubwayStation.from_node(record['nodes'][0]))
                 stop.append(SubwayStation.from_node(record['nodes'][1]))
-
 
         start_station = None
 
@@ -421,36 +418,32 @@ class ScheduleService:
         return df
 
 
-
 class UserService:
     def __init__(self):
         self.repository = UserRepository()
 
-    def add_user(self, user_id: User, email: User, password: User, is_admin: User):
+    def add_user(self, user: User):
         salt = os.urandom(32)
         key = hashlib.pbkdf2_hmac(
             'sha256',  # The hash digest algorithm for HMAC
-            password.encode('utf-8'),  # Convert the password to bytes
+            user.password.encode('utf-8'),  # Convert the password to bytes
             salt,  # Provide the salt
             100000,  # It is recommended to use at least 100,000 iterations of SHA-256
             dklen=128  # Get a 128 byte key
         )
-        storage = salt + key
+        user.password = salt + key
 
         # print(len(storage))
         # print(type(storage))
 
-        self.repository.add_user(user_id, email, storage, is_admin)
-        print("User created")
+        self.repository.add_user(user=user)
 
     def add_many_users(self, user_array: []):
         self.repository.add_many_users(user_array)
-        print("Many Users created")
 
     def get_user_by_email(self,
                           email: User):
         result = self.repository.get_user_by_email(email)[0].__dict__
-
         return result
 
     def login_user(self,

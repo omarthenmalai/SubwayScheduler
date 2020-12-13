@@ -1,3 +1,4 @@
+from __future__ import annotations
 from src.models import *
 from neo4j import GraphDatabase
 import pymongo
@@ -8,15 +9,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, backref, relationship
 from datetime import datetime, timedelta
 
-
-
 neo4j_driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "root"))
 
 client = pymongo.MongoClient('mongodb://localhost:27017/')
 client.start_session()
 collection = client['Train']['schedule']
 
-engine = create_engine('mysql+pymysql://root:password@localhost/ece464-final', echo=True)
+engine = create_engine('mysql+pymysql://root:123456@localhost/ece464_final')
 connection = engine.connect()
 
 Session = sessionmaker(bind=engine)
@@ -24,32 +23,31 @@ session = Session()
 metadata = MetaData(engine)
 
 users = Table('users', metadata,
-				Column('user_id', Integer, primary_key=True),
-				Column('email', String(50)),
-				Column('password', LargeBinary()),
-				Column('is_admin', Integer, default = 0))
+              Column('user_id', Integer, primary_key=True),
+              Column('email', String(50)),
+              Column('password', LargeBinary()),
+              Column('is_admin', Integer, default=0))
 
 metadata.drop_all()
 metadata.create_all()
 
+
 class UserRepository:
-	def add_user(self, user_id, email, password, is_admin):
-		user = {
-			"user_id": user_id,
-			"email": email,
-			"password": password,
-			"is_admin": is_admin
-		}
-		connection.execute(users.insert(), user)
-		session.commit()
+    def __init__(self):
+        self.session = session
+        self.connection = connection
 
-	def add_many_users(self, user_array):
-		connection.execute(users.insert(),user_array)
+    def add_user(self, user: User):
+        self.session.add(user)
+        self.session.commit()
 
-	def get_user_by_email(self, email: str):
-		query = session.query(User).filter(User.email == email).all()
-		
-		return query
+    def add_many_users(self, user_array):
+        self.connection.execute(users.insert(), user_array)
+
+    def get_user_by_email(self, email: str):
+        query = self.session.query(User).filter(User.email == email).all()
+
+        return query
 
 
 class MapRepository:
