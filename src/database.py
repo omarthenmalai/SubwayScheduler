@@ -7,21 +7,18 @@ import numpy as np
 from os import walk
 from os import listdir
 from os.path import isfile, join
+from datetime import datetime
 
 # Local imports
 from src.models import SubwayStation, TrainLine, Schedule
 from src.service import MapService, ScheduleService
-from src.repository import ScheduleRepository
-
-"""
-Lexington Av/63rd St == Lexington Av/59th St
-Lexington Av/53rd St == 51 St
-Broadway-Lafayette St == Bleecker St
-"""
+from src.repository import ScheduleRepository, MapRepository
 
 
 def init_map_db():
     # Initialize MapService to add the SubwayStations and CONNECTS relationships
+    map_repo = MapRepository()
+    map_repo.clear_db()
     map_service = MapService()
 
     total_nodes = 0
@@ -38,6 +35,15 @@ def init_map_db():
         for index in range(0, len(df)):
             row = df.loc[index]
             subway_station = SubwayStation.from_csv_row(row)
+            subway_station.lines = [line for line in subway_station.lines if line != ""]
+            if subway_station.station_name == "World Trade Center":
+                subway_station.lines = "1,2,3,A,C,E,N,Q,R,W".split(",")
+            elif subway_station.station_name == "Bleecker St":
+                subway_station.lines = "4,6,6X,B,D,F,M".split(",")
+            elif subway_station.station_name == "45 St":
+                subway_station.lines = "N,R".split(",")
+            elif subway_station.station_name == "Whitehall St":
+                subway_station.lines = "N,Q,R,W".split(",")
             station_res = map_service.create_station(subway_station)
             if index > 0:
                 prev_row = df.loc[index - 1]
@@ -59,33 +65,45 @@ def init_schedule_db():
     schedule_repository = ScheduleRepository()
     schedule_repository.clear_db()
 
-    onlyfiles = [f for f in listdir('Trains') if isfile(join('Trains', f))]
-
+    onlyfiles = ['{}/{}'.format('Trains', f) for f in listdir('Trains') if isfile(join('Trains', f))]
     filtered = list(filter(lambda k: 'csv' in k, onlyfiles))
 
     for i in range(len(filtered)):
         filename = str(filtered[i])
-        df = pd.read_csv('Trains/1-train-forward.csv')
+        df = pd.read_csv(filename)
+        df.dropna(inplace=True)
         stations = df.columns.values.tolist()
-
-        split_file_name = filename.split('-')
+        stations = [' '.join(station.rstrip().split(" ")[:-1]) for station in stations]
+        split_file_name = filename.split('/')[1].split('-')
 
         line = str(split_file_name[0])
         direction = str(split_file_name[-2])
         direction = direction + '-bound'
 
-        print(line)
-        print(direction)
-
         documents_array = []
 
         for index, row in df.iterrows():
-            test_keys = stations
-            test_values = row
-            res = {test_keys[i]: test_values[i] for i in range(len(test_keys))}
-            # res['Line'] = line
-            # res['Direction'] = direction
-
+            values = row.values
+            good_indices = [i for i in range(0, len(values)) if values[i] != "—" and values[i] != np.nan
+                            and values[i] != "-"]
+            try:
+                times = [values[i].rstrip()\
+                             .replace("#", '')\
+                             .replace("*", "")\
+                             .replace("+", "")\
+                             .replace("^", "")\
+                             .lstrip()\
+                             .rstrip() for i in good_indices]
+                # times = [int(time.split(":")[0])*100 + int(time.split(":")[1]) for time in times]
+            except (IndexError, ValueError) as e:
+                print(e)
+                continue
+            curr_stations = [stations[i] for i in good_indices]
+            try:
+                res = {curr_stations[i]: datetime.strptime(times[i], "%H:%M") for i in range(len(curr_stations))}
+                # res = {curr_stations[i]: times[i] for i in range(len(curr_stations))}
+            except ValueError:
+                continue
             train = {
                 "Line": line,
                 "Direction": direction,
