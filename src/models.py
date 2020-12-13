@@ -12,25 +12,25 @@ from sqlalchemy.types import LargeBinary
 
 Base = declarative_base()
 
+
 class User(Base):
-	__tablename__ = 'users'
+    __tablename__ = 'users'
 
-	user_id = Column(Integer, primary_key=True)
-	email = Column(String(50))
-	password = Column(LargeBinary())
-	is_admin = Column(Integer)
+    user_id = Column(Integer, primary_key=True)
+    email = Column(String(50))
+    password = Column(LargeBinary())
+    is_admin = Column(Integer)
 
-	'''
-	def __repr__(self):
-		obj = {
-			'user_id': self.user_id,
-			'email': self.email,
-			'password': self.password,
-			'is_admin': self.is_admin
-		}
-		#return "<User(user_id={0}, email={1}, password={2})>".format(self.user_id, self.email, self.password)
-		return "{0},{1},{2},{3}".format(self.user_id, self.email, self.password, self.is_admin)
-	'''
+    def __repr__(self):
+        # obj = {
+        # 	'user_id': self.user_id,
+        # 	'email': self.email,
+        # 	'password': self.password,
+        # 	'is_admin': self.is_admin
+        # }
+        # return "<User(user_id={0}, email={1}, password={2})>".format(self.user_id, self.email, self.password)
+        return "{0},{1},{2},{3}".format(self.user_id, self.email, self.password, self.is_admin)
+
 
 class Administrator(Base):
     __tablename__ = 'administrators'
@@ -134,6 +134,9 @@ class SubwayStation:
     def remove_line(self, line):
         self._lines = [x for x in self._lines if x != line]
         return self
+
+    def reroute(self):
+        return self.station_name + "?" + self.entrances
 
     @classmethod
     def from_node(cls, node: Node) -> SubwayStation:
