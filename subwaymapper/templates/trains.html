@@ -1,0 +1,12 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+    <div>
+        <h1>You are on the trains page</h1>
+        <hr />
+        {% for train in Trains %}
+        <a href={{ '/trains/'+train[0]+'-'+train[1] }}>{{ train[0]+'-'+train[1] }}</a>
+        <hr />
+        {% endfor %}
+    </div>
+{% endblock content %}

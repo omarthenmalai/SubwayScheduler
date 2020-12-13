@@ -1,0 +1,23 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+<div><h1>{{ title }}</h1></div>
+<hr />
+<table class="table">
+    <tr style="text-align:center">
+        {% for heading in crown[0].schedule.keys() %}
+        <th>{{ heading }}</th>
+        {% endfor %}
+    </tr>
+
+    {% for row in crown %}
+    <tr class="table__row">
+        {% for cell in row.schedule.values() %}
+        <td class="table__cell" style=text-align:center>{{ cell }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock content %}
