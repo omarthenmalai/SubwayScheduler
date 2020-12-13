@@ -26,6 +26,7 @@ def index():
     # temp = map_service.get_station_by_station_name(station_name="Liberty Av")
     if request.method == "GET":
         stations = map_service.get_all_active_stations()
+        print(stations)
         return render_template("index.html", stations=stations)
     else:
         return "Error"

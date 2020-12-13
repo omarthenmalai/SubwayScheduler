@@ -266,14 +266,14 @@ class MapRepository:
         result = tx.run(
             '''
             MATCH (s:SubwayStation) 
-            REtURN s
+            RETURN s
             '''
         )
         return [x for x in result]
 
     def get_all_active_stations(self):
         with neo4j_driver.session() as s:
-            transact = s.write_transaction(self._get_all_stations)
+            transact = s.write_transaction(self._get_all_active_stations)
         return transact
 
     @staticmethod
@@ -284,6 +284,7 @@ class MapRepository:
             RETURN s
             '''
         )
+        return result
 
     def create_reroute(self, train_line, reroute):
         with neo4j_driver.session() as s:

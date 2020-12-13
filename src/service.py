@@ -296,10 +296,13 @@ class MapService:
                     train_line = TrainLine(start=end_node, stop=end_node, line=line)
                 elif start_node is not None:
                     train_line = TrainLine(start=start_node, stop=start_node, line=line)
+
             # CASE: SubwayStation between two other SubwayStations for the given line
             else:
                 train_line = TrainLine(start=start_node, stop=end_node, line=line)
-
+            print(start_node)
+            print(end_node)
+            print(train_line)
             # If the reroute is not None, then we know that we are rerouting a REROUTES relationship.
             if reroute is not None:
                 self.repository.create_reroute(train_line=train_line, reroute=reroute)

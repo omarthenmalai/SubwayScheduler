@@ -8,18 +8,18 @@ import timeit
 
 
 # init_schedule_db()
-# init_map_db()
+init_map_db()
 map_service = MapService()
 map_repository = MapRepository()
 schedule_repository = ScheduleRepository()
 schedule_service = ScheduleService()
 
-user_service = UserService()
+# user_service = UserService()
 
-user = User("omar.thenmalai@gmail.com", "123456", True)
-user_service.add_user(user)
+# user = User("omar.thenmalai@gmail.com", "123456", True)
+# user_service.add_user(user)
 
-user_service.login_user("omar.thenmalai@gmail.com", "123456")
+# user_service.login_user("omar.thenmalai@gmail.com", "123456")
 
 
 # paths = [6, 6, 6, 2]
