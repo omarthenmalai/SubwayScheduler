@@ -56,9 +56,25 @@ class MapService:
         for t in itertools.product(*lines):
             paths.append(t)
 
+
+
         path_df = MapService._calculate_shortest_path(stations, paths)
 
         return path_df
+
+    @staticmethod
+    def _simplify_paths(path, stations):
+        j = 1
+        new_path = []
+        new_stations = [stations[0]]
+        while j < len(path):
+            if path[j] != path[j-1]:
+                new_path.append(path[j])
+                new_stations.append(stations[j])
+            j += 1
+        print(new_path)
+        print(new_stations)
+        return path
 
     @staticmethod
     def _calculate_shortest_path(stations, paths):
@@ -216,11 +232,11 @@ class MapService:
 
     def set_station_status_out_of_order(self,
                                         station: SubwayStation):
-        '''
+        """
         TODO: Add support for when the station being set out of order is the last on the line
         :param station:
         :return:
-        '''
+        """
 
         # Get all connections for the given station and reroute them as necessary
         connections = self.repository.all_connections(station)

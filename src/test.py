@@ -10,24 +10,27 @@ import timeit
 # Deal with reroutes at the end of a line
 
 # init_schedule_db()
-init_map_db()
+# init_map_db()
 map_service = MapService()
 map_repository = MapRepository()
 schedule_repository = ScheduleRepository()
 schedule_service = ScheduleService()
 
-temp = map_service.get_station_by_name_and_entrance("Eastchester - Dyre Av", "3812 Dyre Avenue")
-start = map_service.get_station_by_name_and_entrance("Union Sq - 14 St", "East 14th Street")
-map_service.set_station_status_out_of_order(start)
-stop = map_service.get_station_by_name_and_entrance("Grand Central - 42 St", "107 E 42 St")
-map_service.set_station_status_out_of_order(stop)
+paths = [6, 6, 6, 2]
+stations = ["a", "b", "c", "d", "e"]
+MapService._simplify_paths(paths, stations)
 
-map_service.set_station_status_normal(stop)
-
-map_service.get_stations_by_line("5")
+# temp = map_service.get_station_by_name_and_entrance("Eastchester - Dyre Av", "3812 Dyre Avenue")
+# start = map_service.get_station_by_name_and_entrance("Union Sq - 14 St", "East 14th Street")
+# map_service.set_station_status_out_of_order(start)
+# stop = map_service.get_station_by_name_and_entrance("Grand Central - 42 St", "107 E 42 St")
+# map_service.set_station_status_out_of_order(stop)
+#
+# map_service.set_station_status_normal(stop)
+#
+# map_service.get_stations_by_line("5")
 
 # stop = map_service.get_station_by_name_and_entrance("86 St", "1280 Lexington Avenue")
-
 
 
 # path = map_service.get_shortest_path(start, stop)

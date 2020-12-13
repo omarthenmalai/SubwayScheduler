@@ -16,41 +16,6 @@ client = pymongo.MongoClient('mongodb://localhost:27017/')
 client.start_session()
 collection = client['Train']['schedule']
 
-engine = create_engine('mysql+pymysql://root:password@localhost/ece464-final', echo=True)
-connection = engine.connect()
-
-Session = sessionmaker(bind=engine)
-session = Session()
-metadata = MetaData(engine)
-
-users = Table('users', metadata,
-              Column('user_id', Integer, primary_key=True),
-              Column('email', String(50)),
-              Column('password', LargeBinary()),
-              Column('is_admin', Integer, default=0))
-
-metadata.drop_all()
-metadata.create_all()
-
-
-class UserRepository:
-    def add_user(self, user_id, email, password, is_admin):
-        user = {
-            "user_id": user_id,
-            "email": email,
-            "password": password,
-            "is_admin": is_admin
-        }
-        connection.execute(users.insert(), user)
-        session.commit()
-
-    def add_many_users(self, user_array):
-        connection.execute(users.insert(), user_array)
-
-    def get_user_by_email(self, email: str):
-        query = session.query(User).filter(User.email == email).all()
-
-        return query
 
 class MapRepository:
 
