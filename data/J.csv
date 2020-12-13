@@ -1,9 +1,9 @@
 station_name,borough,entrance,lines,latitude,longitude
 Jamaica Center - Parsons/Archer,Queens,155-01 Archer Avenue,"E,J,Z",40.702391,-73.8008265
 Sutphin Blvd - Archer Av - JFK Airport,Queens,93-25 Sutphin Blvd,"E,J,Z",40.70546,-73.810708
-121 St,Queens,121-17 Jamaica Ave,"J,Z",40.7134769,-73.7563404
+121 St,Queens,121-17 Jamaica Ave,"J,Z",40.7182258,-73.7361584
 111 St,Queens,112-02 Jamaica Ave,J,40.69731925,-73.8362009602043
-104 St,Queens,102-28 Jamaica Ave,"J,Z",40.7228607,-73.7290154
+104 St,Queens,102-28 Jamaica Ave,"J,Z",40.7182258,-73.7361584
 Woodhaven Blvd,Queens,93-15 Jamaica Avenue,"J,Z",40.6939929,-73.8515891
 85 St - Forest Pkwy,Queens,84-27 Jamaica Ave,J,40.69262305,-73.86003634196568
 75 St,Queens,74-24 Jamaica Ave,"J,Z",40.69113845,-73.86707246459011
@@ -25,7 +25,7 @@ Hewes St,Brooklyn,417 Broadway,"J,M",40.7070727,-73.95335613629032
 Marcy Av,Brooklyn,299 Broadway,"J,M,Z",40.7084704,-73.9577078
 Delancey St - Essex St,Manhattan,118 Delancey Street,"F,J,M,Z",40.7186904,-73.9878914
 Bowery,Manhattan,173 Bowery,"J,Z",40.7200351,-73.9939316
-Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,6",40.7187615,-74.0006954
-Brooklyn Bridge - Chambers St,Manhattan,1 Centre St,"J,Z,4,5,6",40.7138338,-74.0032757
+Canal St,Manhattan,257 Canal Street,"N,Q,R,J,Z,4,6",40.7187615,-74.0006954
+Brooklyn Bridge - Chambers St,Manhattan,1 Centre St,"J,Z,4,5,6",40.7200487,-73.9983066
 Fulton St,Manhattan,139 Fulton St,"A,C,N,R,W,J,Z,2,3,4,5",40.7103635,-74.0077635
-Broad St,Manhattan,40 Broad Street,"J,Z",40.7064596,-74.0112322
+Broad St,Manhattan,40 Broad Street,"J,Z",40.7060321,-74.0115279

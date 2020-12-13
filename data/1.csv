@@ -1,12 +1,12 @@
 station_name,borough,entrance,lines,latitude,longitude
-South Ferry Loop,Manhattan,Peter Minuit Plaza,"1,N,R,W",40.7022763,-74.0138048
-Rector St,Manhattan,69 Greenwich Street,1,40.70561873469388,-74.01448534693877
-Wtc - Cortlandt,Manhattan,19 Church Street,1,40.7106227,-74.0108547
-Chambers St,Manhattan,Chambers Street,"1,2,3",40.7149161,-74.0079676
+South Ferry Loop,Manhattan,Peter Minuit Plaza,"1,N,R,W",40.7019869,-74.0140074
+Rector St,Manhattan,69 Greenwich Street,1,40.7048995,-74.0149179
+World Trade Center,Manhattan,79 Church St,"1,2,3,A,C,E,N,Q,R,",40.7124205,-74.0096888
+Chambers St,Manhattan,Chambers Street,"1,2,3",40.7155081,-74.0092451
 Franklin St,Manhattan,1 Varick St,"1,2",40.7232381,-74.0064052
 Canal St,Manhattan,1 Hudson Sq,"1,2",40.7268035,-74.0079833
 Houston St,Manhattan,200 Varick Street,"1,2",40.7284401,-74.005096
-Christopher St - Sheridan Sq,Manhattan,7th Avenue South,"1,2",40.730321,-74.004688
+Christopher St - Sheridan Sq,Manhattan,7th Avenue South,"1,2",40.7350834,-74.0019682
 14 St,Manhattan,37 7th Avenue,"1,2,3",40.7376789,-74.0001842
 18 St,Manhattan,127 7th Avenue,"1,2",40.7408025,-73.9978137
 23 St,Manhattan,7th Avenue,"1,2",40.762862,-73.981637
@@ -15,19 +15,19 @@ Christopher St - Sheridan Sq,Manhattan,7th Avenue South,"1,2",40.730321,-74.0046
 Times Sq - 42 St,Manhattan,7 West 42nd Street,"N,Q,R,S,1,2,3,7,7x",40.7557653,-73.9867599
 50 St Subway Station,Manhattan,1638 Broadway,"1,2",40.7616823,-73.9836696
 59 St - Columbus Circle,Manhattan,Columbus Circle,"A,B,C,D,1",40.76808045,-73.98189744682783
-66 St - Lincoln Center,Manhattan,Broadway,"1,2",40.8732847,-73.911655
+66 St - Lincoln Center,Manhattan,Broadway,"1,2",40.8741489,-73.9105305
 72 St,Manhattan,2073 Broadway,"1,2,3",40.7785184,-73.9822822
-79 St,Manhattan,West 79th Street,"1,2",40.7855991,-73.9841561
+79 St,Manhattan,West 79th Street,"1,2",40.7850348,-73.9827843
 86 St,Manhattan,2379 Broadway,"1,2",40.7888765,-73.9763773
 96 St,Manhattan,250 West 95th Street,"1,2,3",40.7939883,-73.9725479
 103 St,Manhattan,2709 Broadway,1,40.7995739,-73.9686062
 Cathedral Pkwy,Manhattan,2833 Broadway,1,40.804054,-73.9671152
-116 St - Columbia University,Manhattan,2953 Broadway,1,40.8088168,-73.9632044
-125 St,Manhattan,West 125th Street,1,40.81748,-73.9599342
+116 St - Columbia University,Manhattan,2953 Broadway,1,40.8741489,-73.9105305
+125 St,Manhattan,West 125th Street,1,40.8170071,-73.9594934
 137 St - City College,Manhattan,West 138th Street,1,40.8142501,-73.9348112
-145 St,Manhattan,3545 Broadway,1,40.8088168,-73.9632044
+145 St,Manhattan,3545 Broadway,1,40.8741489,-73.9105305
 157 St,Manhattan,3778 Broadway,1,40.8337498,-73.9447944
-168 St,Manhattan,West 168th Street,"A,C,1",40.84095,-73.9394804
+168 St,Manhattan,West 168th Street,"A,C,1",40.8410769,-73.9397546
 181 St,Manhattan,1421 St Nicholas Ave,1,40.8495926,-73.9337487
 191 St,Manhattan,1606 St Nicholas Ave,1,40.8551056,-73.9292692
 Dyckman St,Manhattan,Hillside Avenue,1,40.859012,-73.927625
@@ -35,5 +35,5 @@ Dyckman St,Manhattan,Hillside Avenue,1,40.859012,-73.927625
 215 St,Manhattan,500 West 215th Street,1,40.869496,-73.9154718
 Marble Hill - 225 St,Manhattan,5203 Broadway,1,40.8747629,-73.909835
 231 St,The Bronx,5572 Broadway,1,40.8787164,-73.904712
-238 St,The Bronx,Broadway,1,40.877706,-73.905657
-Van Cortlandt Park - 242 St,The Bronx,5959 Broadway,1,40.88919095652174,-73.89860508695652
+238 St,The Bronx,Broadway,1,40.8905639,-73.8979096
+Van Cortlandt Park - 242 St,The Bronx,5959 Broadway,1,40.9101937,-73.8966324

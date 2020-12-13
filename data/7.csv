@@ -1,23 +1,23 @@
 station_name,borough,entrance,lines,latitude,longitude
-Flushing - Main St,Queens,Main Street,"7x,7",40.7598767,-73.830298
+Flushing - Main St,Queens,Main Street,"7x,7",40.7300337,-73.8233959
 Mets - Willets Point,,,"7x,7",40.7127281,-74.0060152
 111 St,Queens,111-12 Roosevelt Ave,7,40.751503549999995,-73.85524135
-103 St - Corona Plaza,Queens,39-23 103 St,7,40.6496108,-73.7933963
+103 St - Corona Plaza,Queens,39-23 103 St,7,40.7383371,-73.903092
 Junction Blvd,Queens,95-58 Roosevelt Ave,"7x,7",40.7640309,-73.8091419
 90 St - Elmhurst Av,Queens,37-74 90 St,7,40.6493897,-73.7938992
 82 St - Jackson Hts,Queens,82-03 Roosevelt Ave,7,40.74784255,-73.88374602104042
-Jackson Hts - Roosevelt Av - 74 St,Queens,74-02 Roosevelt Avenue,"E,F,M,R,7",40.7585475,-73.8332175
-69 St,Queens,68-30 Roosevelt Ave,7,40.7531201,-73.8506373
-Woodside - 61 St,Queens,61-12 Roosevelt Ave,"7x,7",40.7585475,-73.8332175
-52 St,Queens,52nd Street,7,40.742623,-73.9128213
+Jackson Hts - Roosevelt Av - 74 St,Queens,74-02 Roosevelt Avenue,"E,F,M,R,7",40.749376,-73.867514
+69 St,Queens,68-30 Roosevelt Ave,7,40.749376,-73.867514
+Woodside - 61 St,Queens,61-12 Roosevelt Ave,"7x,7",40.749376,-73.867514
+52 St,Queens,52nd Street,7,40.7423748,-73.9129294
 46 St,Queens,46-01 Queens Boulevard,7,40.7434427,-73.9185084
 40 St,Queens,40-08 Queens Boulevard,7,40.7434861,-73.9240796
 33 St,Queens,33-14 Queens Boulevard,7,40.7443117,-73.9311158
 Queensboro Plaza,Queens,25-08A Queens Plaza South,"N,W,7",40.7502991,-73.9403411
-Court Sq - 23 St,Queens,45-01 23 St,"E,G,M,7",40.7747019,-73.8688116
-Hunters Point Av,Queens,21-00 49th Avenue,"7x,7",40.741603,-73.944457
-Vernon Blvd - Jackson Av,Queens,10-09 50 Ave,"7x,7",40.773298,-73.8683166
+Court Sq - 23 St,Queens,45-01 23 St,"E,G,M,7",40.7467653,-73.94512388972869
+Hunters Point Av,Queens,21-00 49th Avenue,"7x,7",40.7432588,-73.9529862
+Vernon Blvd - Jackson Av,Queens,10-09 50 Ave,"7x,7",40.7427887,-73.9535338315867
 Grand Central - 42 St,Manhattan,107 E 42 St,"4,5,6x,6,7,7x,S",40.796501899999996,-73.91576940902175
 5 Av,Manhattan,2 West 42nd Street,"7x,7",40.7536536,-73.9819165
 Times Sq - 42 St,Manhattan,7 West 42nd Street,"N,Q,R,S,1,2,3,7,7x",40.7557653,-73.9867599
-34 St - 11 Av,Manhattan,523 West 33rd Street,7,40.754292,-74.00029557142858
+34 St - 11 Av,Manhattan,523 West 33rd Street,7,40.7491303,-73.9882543
