@@ -11,21 +11,21 @@ nav.register_element('navbar',
                             View('Home Page', 'index'),
                             View('Lines', 'lines'),
                             # View('Schedules', 'schedule'),
-                            View('Plan a Trip', 'plan_trip')
+                            View('Delays', 'delays')
                             # Separator()
                             )
                      )
 
 map_service = MapService()
 schedule_service = ScheduleService()
-user_type = "user"
+user_type = "admin"
 
 
 @app.route("/", methods=["GET"])
 def index():
     # temp = map_service.get_station_by_station_name(station_name="Liberty Av")
     if request.method == "GET":
-        stations = map_service.get_all_stations()
+        stations = map_service.get_all_active_stations()
         return render_template("index.html", stations=stations)
     else:
         return "Error"
@@ -86,14 +86,12 @@ def schedules():
 @app.route("/delays", methods=["GET"])
 def delays():
     delayed_schedules = schedule_service.get_delays()
-    print(delayed_schedules)
     return render_template("delays.html",
                            delayed_schedules=delayed_schedules)
 
 
-@app.route("/")
 
-@app.route("/<line>/<station_name>/<entrance>")
+@app.route('/<line>/<station_name>/<entrance>')
 def change_station_status(line, station_name, entrance):
     station = map_service.get_station_by_name_and_entrance(station_name=station_name,
                                                            entrance=entrance)
@@ -101,7 +99,7 @@ def change_station_status(line, station_name, entrance):
         map_service.set_station_status_out_of_order(station)
     else:
         map_service.set_station_status_normal(station)
-    return redirect(url_for("lines",line=line))
+    return redirect(url_for("lines", line=line))
 
 
 if __name__ == "__main__":

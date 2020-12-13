@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Lines</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
 
 </head>
 <body>
@@ -21,7 +22,7 @@
             <tr class="active-row">
                 <td>{{ line }}</td>
                 <td>
-                    <a href={{ "lines/" ~ line }} action="GET">
+                    <a href={{ "lines?line=" ~ line }} action="GET">
                         View Stops
                     </a>
                 </td>

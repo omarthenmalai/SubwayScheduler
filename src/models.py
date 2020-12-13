@@ -168,6 +168,9 @@ class SubwayStation:
             longitude=row['longitude']
         )
 
+    def reroute(self):
+        return self.station_name + "?" + self.entrances
+
 
     def __eq__(self, other: SubwayStation) -> bool:
         '''

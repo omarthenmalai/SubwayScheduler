@@ -68,7 +68,7 @@ class MapRepository:
             '''
             MATCH path=(a:SubwayStation)-[r]->()
             WHERE $line = r.line
-            RETURN nodes(path) as nodes
+            RETURN nodes(path) as nodes, r
             ''',
             line=line
         )
@@ -200,7 +200,7 @@ class MapRepository:
             MATCH (start:SubwayStation{station_name: $start_name, entrances: $start_entrance}),
              (end:SubwayStation{station_name:$stop_name, entrances: $stop_entrance})
             CALL gds.alpha.kShortestPaths.stream({
-                nodeQuery: 'MATCH(n:SubwayStation) RETURN id(n) AS id',
+                nodeQuery: 'MATCH(n:SubwayStation{status:"Normal"}) RETURN id(n) AS id',
                 relationshipQuery:'MATCH(n:SubwayStation)-[r]-(m:SubwayStation) RETURN id(n) AS source, id(m) AS target,
                                 r.cost as cost',
                 startNode: start,
@@ -233,6 +233,20 @@ class MapRepository:
             '''
         )
         return [x for x in result]
+
+    def get_all_active_stations(self):
+        with neo4j_driver.session() as s:
+            transact = s.write_transaction(self._get_all_stations)
+        return transact
+
+    @staticmethod
+    def _get_all_active_stations(tx):
+        result = tx.run(
+            '''
+            MATCH (s:SubwayStation{status: "Normal"})
+            RETURN s
+            '''
+        )
 
     def create_reroute(self, train_line, reroute):
         with neo4j_driver.session() as s:
@@ -289,14 +303,14 @@ class MapRepository:
         result = tx.run(
             '''
             MATCH ()-[r:REROUTES]->()
-            WHERE $station_name in r.reroute
+            WHERE $subway_station in r.reroute
             RETURN 
                 startNode(r) as start, 
                 endNode(r) as end, 
                 r.line AS line, 
                 r.reroute as reroute
             ''',
-            station_name=station.station_name
+            subway_station=station.reroute()
         )
         return [x for x in result]
 
@@ -306,16 +320,18 @@ class MapRepository:
         return transact
 
     @staticmethod
-    def _remove_reroute(tx, reroute):
+    def _remove_reroute(tx, station):
         result = tx.run(
             '''
-            MATCH (s:SubwayStation{station_name: $reroute})
+            MATCH (s:SubwayStation{station_name: $station_name, entrances: $entrances})
             MATCH ()-[r:REROUTES]->()
             WHERE $reroute in r.reroute
             SET s.status = "Normal"
             DELETE r
             ''',
-            reroute=reroute
+            station_name=station.station_name,
+            entrances=station.entrances,
+            reroute=station.reroute()
         )
         return [x for x in result]
 
