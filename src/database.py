@@ -120,7 +120,6 @@ def init_schedule_db():
             documents_array.append(train)
 
         schedule_repository.bulk_insert_schedules(documents_array)
-        # collection.insert_many(documents_array)
 
 
 def fix_station_name(stations):
@@ -140,3 +139,8 @@ def fix_station_name(stations):
 
 
     return stations
+
+
+if __name__ == "__main__":
+    init_map_db()
+    #init_schedule_db()

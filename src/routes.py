@@ -8,6 +8,7 @@ from src.forms import LoginForm, RegistrationForm
 from src.service import MapService, ScheduleService, UserService, TripService
 from src.repository import MapRepository, ScheduleRepository, UserRepository
 from src.models import User, Schedule, Trip, SubwayStation, TrainLine
+from src.database import init_map_db
 from src import app
 
 nav = Nav(app)
@@ -25,28 +26,6 @@ map_service = MapService()
 schedule_service = ScheduleService()
 user_service = UserService()
 trip_service = TripService()
-
-Trains = [["1", "Bronx-Bound"], ["1", "Manhattan-Bound"],
-          ["2", "Bronx-Bound"], ["2", "Brooklyn-Bound"],
-          ["3", "Brooklyn-Bound"], ["3", "Manhattan-Bound"],
-          ["4", "Bronx-Bound"], ["4", "Brooklyn-Bound"],
-          ["5", "Bronx-Bound"], ["5", "Brooklyn-Bound"],
-          ["6", "Bronx-Bound"], ["6", "Manhattan-Bound"],
-          ["7", "Manhattan-Bound"], ["7", "Queens-Bound"],
-          ["A", "Manhattan-Bound"], ["A", "Queens-Bound"],
-          ["B", "Bronx-Bound"], ["B", "Brooklyn-Bound"],
-          ["C", "Brooklyn-Bound"], ["C", "Manhattan-Bound"],
-          ["D", "Bronx-Bound"], ["D", "Brooklyn-Bound"],
-          ["E", "Manhattan-Bound"], ["E", "Queens-Bound"],
-          ["F", "Brooklyn-Bound"], ["F", "Queens-Bound"],
-          ["G", "Brooklyn-Bound"], ["G", "Queens-Bound"],
-          ["J", "Manhattan-Bound"], ["J", "Queens-Bound"],
-          ["L", "Manhattan-Bound"], ["L", "Brooklyn-Bound"],
-          ["M", "Brooklyn-Bound"], ["M", "Queens-Bound"],
-          ["N", "Brooklyn-Bound"], ["N", "Queens-Bound"],
-          ["Q", "Brooklyn-Bound"], ["Q", "Manhattan-Bound"],
-          ["R", "Brooklyn-Bound"], ["R", "Queens-Bound"],
-          ["W", "Manhattan-Bound"], ["W", "Queens-Bound"]]
 
 
 @app.route("/", methods=["GET"])

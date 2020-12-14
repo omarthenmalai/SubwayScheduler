@@ -177,9 +177,62 @@ class MapService:
                 prev_reroute = None
 
                 for i in range(0, len(reroutes)):
+
+                    split_reroutes = reroutes[i].split("?")
                     rerouted_station = self.get_station_by_name_and_entrance(reroutes[i].split("?")[0],
                                                                              reroutes[i].split("?")[1])
-                    if len(reroutes) > 1:
+
+                    if split_reroutes[-1] == "start":
+                        for j in range(0, len(reroutes)):
+                            split_reroutes = reroutes[j].split("?")
+                            rerouted_station = self.get_station_by_name_and_entrance(split_reroutes[0],
+                                                                                     split_reroutes[1])
+
+                            if j == 0:
+                                start.append(rerouted_station)
+                                try:
+                                    next_rerouted_station = self.get_station_by_name_and_entrance(
+                                        reroutes[j + 1].split("?")[0],
+                                        reroutes[j + 1].split("?")[1])
+                                    stop.append(next_rerouted_station)
+                                except IndexError:
+                                    stop.append(SubwayStation.from_node(record['nodes'][0]))
+
+
+                            elif j == len(reroutes) - 1:
+                                start.append(rerouted_station)
+                                stop.append(SubwayStation.from_node(record['nodes'][0]))
+                            else:
+                                start.append(rerouted_station)
+                                stop.append(rerouted_station)
+                        break
+
+                    elif split_reroutes[-1] == "end":
+                        # if len(reroutes) == 1:
+                        for j in range(0, len(reroutes)):
+                            rerouted_station = self.get_station_by_name_and_entrance(reroutes[j].split("?")[0],
+                                                                                     reroutes[j].split("?")[1])
+                            if j == len(reroutes) - 1:
+                                stop.append(rerouted_station)
+                                if j-1 != -1:
+                                    prev_rerouted_station = self.get_station_by_name_and_entrance(
+                                        reroutes[j-1].split("?")[0],
+                                        reroutes[j-1].split("?")[1])
+                                    start.append(prev_rerouted_station)
+                                else:
+                                    start.append(SubwayStation.from_node(record['nodes'][0]))
+                                    print('err')
+                                    print(SubwayStation.from_node(record['nodes'][0]))
+
+                            elif j == 0:
+                                start.append(SubwayStation.from_node(record['nodes'][0]))
+                                stop.append(rerouted_station)
+                            else:
+                                start.append(rerouted_station)
+                                stop.append(rerouted_station)
+                        break
+
+                    elif len(reroutes) > 1:
                         if i == 0:
                             start.append(SubwayStation.from_node(record['nodes'][0]))
                             stop.append(rerouted_station)
@@ -198,24 +251,33 @@ class MapService:
                         stop.append(rerouted_station)
                         start.append(rerouted_station)
                         stop.append(SubwayStation.from_node(record['nodes'][1]))
-
             else:
                 start.append(SubwayStation.from_node(record['nodes'][0]))
                 stop.append(SubwayStation.from_node(record['nodes'][1]))
 
+        # Get starting station
         start_station = None
-
         for station in start:
             if station not in stop:
                 start_station = station
         ordered_stations = [start_station]
         prev_station = start_station
-        i = 1
+
+        # Get stations in order
+        i = 0
         while i < len(start):
             index = start.index(prev_station)
             prev_station = stop[index]
             ordered_stations.append(prev_station)
             i += 1
+
+        # Append final station
+        # stop_station = None
+        # for station in stop:
+        #     if station not in start:
+        #         stop_station = station
+        # ordered_stations.append(stop_station)
+
         return ordered_stations
 
     def get_connections_between_stations(self,
@@ -273,15 +335,28 @@ class MapService:
 
                     # First reroute found. This check is necessary because
                     # a given station may have reroutes on both sides.
+
                     if reroute is None:
                         reroute = record['reroute']
-                        if station == start:
+                        starting_reroute = record['reroute'][0].split("?")
+                        ending_reroute = record['reroute'][-1].split("?")
+                        if starting_reroute[-1] == "start":
+                            reroute = reroute + [station.reroute()]
+                        elif ending_reroute[-1] == "end":
+                            reroute = [station.reroute()] + reroute
+                        elif station == start:
                             reroute = [station.reroute()] + reroute
                         elif station == end:
                             reroute = reroute + [station.reroute()]
                     # Not the first reroute found for the given SubwayStation and line.
                     elif reroute is not None:
-                        if station.station_name == start.station_name:
+                        starting_reroute = record['reroute'][0].split("?")
+                        ending_reroute = record['reroute'][-1].split("?")
+                        if starting_reroute[-1] == "start":
+                            reroute = record['reroute'] + [station.reroute()]
+                        elif ending_reroute[-1]['reroute'] == "end":
+                            reroute = [station.reroute()] + record['reroute']
+                        elif station.station_name == start.station_name:
                             reroute = reroute + record['reroute']
                         elif station.station_name == end.station_name:
                             reroute = record['reroute'] + reroute
@@ -292,7 +367,7 @@ class MapService:
                 elif end == station:
                     start_node = start
                 else:
-                    print('ERROR: set_station_status_out_of_order -> given station is neither or starting or ending '
+                    print('ERROR: set_station_status_out_of_order -> given station is neither starting nor ending '
                           'node')
 
             # CASE: End of the line
@@ -300,18 +375,45 @@ class MapService:
             if start_node is None or end_node is None:
                 if end_node is not None:
                     train_line = TrainLine(start=end_node, stop=end_node, line=line)
+                    if reroute is not None:
+                        reroute[0] = reroute[0] + "?start"
+                    else:
+                        reroute = [station.reroute() + "?start"]
                 elif start_node is not None:
                     train_line = TrainLine(start=start_node, stop=start_node, line=line)
-
+                    if reroute is not None:
+                        reroute[-1] = reroute[-1] + "?end"
+                    else:
+                        reroute = [station.reroute() + "?end"]
+            elif start_node == end_node:
+                continue
+            elif reroute is not None and reroute[0].split("?")[-1] == "start":
+                train_line = TrainLine(start=end_node, stop=end_node, line=line)
+            elif reroute is not None and reroute[-1].split("?")[-1] == "end":
+                train_line = TrainLine(start=start_node, stop=start_node, line=line)
             # CASE: SubwayStation between two other SubwayStations for the given line
             else:
                 train_line = TrainLine(start=start_node, stop=end_node, line=line)
+
+
+            print(reroute)
+
             # If the reroute is not None, then we know that we are rerouting a REROUTES relationship.
             if reroute is not None:
                 self.repository.create_reroute(train_line=train_line, reroute=reroute)
+
             # Creating a reroute from two CONNECTS
             else:
                 self.repository.create_reroute(train_line=train_line, reroute=[station.reroute()])
+
+            # Creating a reroute for a starting or ending node
+            # else:
+                # Node is at the start of the line
+                # if start_node is None:
+                #     self.repository.create_reroute(train_line=train_line, reroute=[station.reroute() + "?start"])
+                # Node is at the end of the line
+                # else:
+                #     self.repository.create_reroute(train_line=train_line, reroute=[station.reroute() + "?end"])
 
         return True
 
@@ -324,9 +426,18 @@ class MapService:
         '''
 
         # Get all reroutes associated with the given station
-        reroutes = self.repository.get_reroutes(station)
+
+        reroutes = self.repository.get_reroutes(station.reroute())
+        extra = ""
+        if len(reroutes) == 0:
+            extra = "?start"
+            reroutes = self.repository.get_reroutes(station.reroute() + extra)
+        if len(reroutes) == 0:
+            extra = "?end"
+            reroutes = self.repository.get_reroutes(station.reroute() + extra)
+
         # Remove all reroutes and set the station status to "Normal"
-        self.repository.remove_reroute(station)
+        self.repository.remove_reroute(station.reroute() + extra)
 
         # Iterate through reroutes and restore them to the given station
         for r in reroutes:
@@ -336,19 +447,29 @@ class MapService:
             rerouted_stations = r['reroute']
 
             # Index of station in the reroute array for a given REROUTES relationship
-            station_index = rerouted_stations.index(station.reroute())
+
+            station_index = rerouted_stations.index(station.reroute() + extra)
 
             start = SubwayStation.from_node(r['start'])
             end = SubwayStation.from_node(r['end'])
 
-            # Create the TrainLine objects going into and out of the reintroduced SubwayStation
-            line_in = TrainLine(start=start, stop=station, line=line)
-            line_out = TrainLine(start=station, stop=end, line=line)
+            if extra == "":
+                # Create the TrainLine objects going into and out of the reintroduced SubwayStation
+                line_in = TrainLine(start=start, stop=station, line=line)
+                line_out = TrainLine(start=station, stop=end, line=line)
+            elif extra == "?start":
+                line_in = None
+                line_out = TrainLine(start=station, stop=start, line=line)
+            elif extra == "?end":
+                line_in = TrainLine(start=start, stop=station, line=line)
+                line_out = None
 
             # The given station is the only one being rerouted by the given REROUTES relationship
             if len(rerouted_stations) == 1:
                 self.repository.create_connection(line_in)
                 self.repository.create_connection(line_out)
+
+
 
             # The given REROUTES relationship has multiple SubwayStation's that it is rerouting
             else:
@@ -361,6 +482,7 @@ class MapService:
                     self.repository.create_reroute(train_line=line_in,
                                                    reroute=rerouted_stations[:station_index])
                     self.repository.create_connection(train_line=line_out)
+
                 # The given SubwayStation is somewhere in the middle of the reroute (will have REROUTES on both sides
                 else:
                     self.repository.create_reroute(train_line=line_in,
@@ -407,7 +529,6 @@ class ScheduleService:
                                                                                     starting_station, time)
         return Schedule.from_mongo(result)
 
-
     def remove_delay(self, schedule: Schedule):
         if schedule.delay is None:
             print("ERROR: Current train does not have a delay to remove")
@@ -438,16 +559,14 @@ class ScheduleService:
             schedules = sorted(results, key=lambda schedule: schedule['Schedule'][min(schedule['Schedule'],
                                                                                       key=schedule["Schedule"].get)])
             stations = list(schedules[0]["Schedule"].keys())
-            schedules = [ [val.strftime("%H:%M") for val in schedule["Schedule"].values()] for schedule in schedules]
+            schedules = [[val.strftime("%H:%M") for val in schedule["Schedule"].values()] for schedule in schedules]
             return stations, schedules
         else:
             return None
 
-
     def get_unique_line_direction(self):
         result = self.repository.get_unique_line_direction()
         combinations = [Schedule(line=x['_id']['Line'], direction=x['_id']['Direction']) for x in result]
-
 
         line_direction_dict = {}
         for schedule in combinations:

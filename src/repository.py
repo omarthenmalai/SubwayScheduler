@@ -185,6 +185,8 @@ class MapRepository:
         :param train_line: TrainLine object
         :return: result of the trasaction
         """
+        if train_line is None:
+            return None
         with neo4j_driver.session() as s:
             transact = s.write_transaction(self._create_connection, train_line)
 
@@ -305,6 +307,8 @@ class MapRepository:
         return [x for x in result]
 
     def create_reroute(self, train_line, reroute):
+        if train_line is None:
+            return None
         with neo4j_driver.session() as s:
             transact = s.write_transaction(self._create_reroute, train_line, reroute)
         return transact
@@ -349,13 +353,13 @@ class MapRepository:
         )
         return result.single()
 
-    def get_reroutes(self, station):
+    def get_reroutes(self, reroute):
         with neo4j_driver.session() as s:
-            transact = s.write_transaction(self._get_reroutes, station)
+            transact = s.write_transaction(self._get_reroutes, reroute)
         return transact
 
     @staticmethod
-    def _get_reroutes(tx, station):
+    def _get_reroutes(tx, reroute):
         result = tx.run(
             '''
             MATCH ()-[r:REROUTES]->()
@@ -366,7 +370,7 @@ class MapRepository:
                 r.line AS line, 
                 r.reroute as reroute
             ''',
-            subway_station=station.reroute()
+            subway_station=reroute
         )
         return [x for x in result]
 
@@ -376,18 +380,19 @@ class MapRepository:
         return transact
 
     @staticmethod
-    def _remove_reroute(tx, station):
+    def _remove_reroute(tx, reroute):
+        info = reroute.split("?")
         result = tx.run(
             '''
-            MATCH (s:SubwayStation{station_name: $station_name, entrances: $entrances})
+            MATCH (s:SubwayStation{ station_name: $station_name, entrances: $entrances})
             MATCH ()-[r:REROUTES]->()
             WHERE $reroute in r.reroute
             SET s.status = "Normal"
             DELETE r
             ''',
-            station_name=station.station_name,
-            entrances=station.entrances,
-            reroute=station.reroute()
+            station_name=info[0],
+            entrances=info[1],
+            reroute=reroute
         )
         return [x for x in result]
 
