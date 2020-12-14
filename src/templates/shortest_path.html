@@ -1,20 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/plan_trip.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
-
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
 </head>
 <body>
-    <style> .navbar ul { list-style-type: none; }</style>
-    {{ nav.navbar.render() }}
-    {% for train_line in train_lines %}
-    <p>
-        {{ train_line }}
-    </p>
-    {% endfor %}
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Start</th>
+                <th>Stop</th>
+                <th>Line</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for train_line in train_lines %}
+            <tr class="active-row">
+                <td>{{ train_line.start.station_name + ", " +  train_line.start.entrances }}</td>
+                <td>{{ train_line.stop.station_name + ", " + train_line.stop.entrances }}</td>
+                <td>{{ train_line.line }}</td>
+                <td>{{ train_line.departure_time }}</td>
+                <td>{{ train_line.arrival_time }}</td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+    <a href="{{ '/log-trip/%s/%s/%s/%s' % (train_lines[0].start.station_name,
+        train_lines[-1].stop.station_name, train_lines[0].departure_time, train_lines[-1].arrival_time) }}" >
+        <input type="submit" value="Log Trip"/>
+    </a>
 </body>
-</html>
+{% endblock content %}

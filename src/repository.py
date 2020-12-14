@@ -1,11 +1,14 @@
 from __future__ import annotations
+import hashlib
 from src.models import *
+from src import login_manager
 from neo4j import GraphDatabase
 import pymongo
 from bson import SON
 from sqlalchemy import create_engine, Integer, String, Column, Date, ForeignKey, \
     PrimaryKeyConstraint, func, desc, MetaData, Table
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, backref, relationship
 from datetime import datetime, timedelta
 
@@ -28,8 +31,22 @@ users = Table('users', metadata,
               Column('password', LargeBinary()),
               Column('is_admin', Integer, default=0))
 
-metadata.drop_all()
-metadata.create_all()
+trips = Table('trips', metadata,
+              Column('user_id', Integer, primary_key=True),
+              Column('timestamp', DateTime, primary_key=True),
+              Column('start', String(100)),
+              Column('stop', String(100)),
+              Column('time', Integer))
+
+
+# metadata.drop_all()
+# metadata.create_all()
+
+
+@login_manager.user_loader
+def load_user(id):
+    u = session.query(User).get(id)
+    return u
 
 
 class UserRepository:
@@ -40,13 +57,14 @@ class UserRepository:
     def add_user(self, user: User):
         self.session.add(user)
         self.session.commit()
+        self.session.refresh(user)
+        return user
 
     def add_many_users(self, user_array):
         self.connection.execute(users.insert(), user_array)
 
     def get_user_by_email(self, email: str):
-        query = self.session.query(User).filter(User.email == email).all()
-
+        query = self.session.query(User).filter(User.email == email).first()
         return query
 
 
@@ -284,7 +302,7 @@ class MapRepository:
             RETURN s
             '''
         )
-        return result
+        return [x for x in result]
 
     def create_reroute(self, train_line, reroute):
         with neo4j_driver.session() as s:
@@ -402,7 +420,7 @@ class MapRepository:
     def _all_connections(tx, station):
         result = tx.run(
             '''
-            MATCH (a:SubwayStation{station_name: $station_name}), (b:SubwayStation)
+            MATCH (a:SubwayStation{station_name: $station_name, entrances: $entrances}), (b:SubwayStation)
             MATCH (a)-[r]-(b)
             RETURN 
                 startNode(r) as start, 
@@ -410,7 +428,8 @@ class MapRepository:
                 r.line AS line, 
                 r.reroute as reroute
             ''',
-            station_name=station.station_name
+            station_name=station.station_name,
+            entrances=station.entrances
         )
         return [x for x in result]
 
@@ -427,17 +446,21 @@ class MapRepository:
             )
             return [x for x in result]
 
-    @staticmethod
-    def get_distinct_lines():
+    def get_distinct_lines(self):
         with neo4j_driver.session() as s:
-            result = s.run(
-                '''
-                MATCH ()-[r]-()
-                WITH DISTINCT r.line AS lines
-                return lines
-                '''
-            )
-            return [x for x in result]
+            transact = s.write_transaction(self._get_distinct_lines)
+        return transact
+
+    @staticmethod
+    def _get_distinct_lines(tx):
+        result = tx.run(
+            '''
+            MATCH ()-[r]-()
+            WITH DISTINCT r.line AS lines
+            return lines
+            '''
+        )
+        return [x for x in result]
 
     @staticmethod
     def clear_db():
@@ -467,11 +490,10 @@ class ScheduleRepository:
             {
                 "$match":
                     {
-                        "$expr": {"$gt": ["$Schedule.{}".format(end_station_name),
-                                          "$Schedule.{}".format(start_station_name)]},
                         "Line": line,
                         "Schedule.{}".format(start_station_name): {"$gte": time},
-                        # "Schedule.{}".format(end_station_name): {"$gte": time+timedelta(minutes=1)},
+                        "$expr": {"$gt": ["$Schedule.{}".format(end_station_name),
+                                          "$Schedule.{}".format(start_station_name)]},
                     }
             },
             {
@@ -479,9 +501,25 @@ class ScheduleRepository:
             },
             {
                 "$limit": 1
+            },
+            {
+                "$project":
+                    {
+                        "Schedule.{}".format(start_station_name): 1,
+                        "Schedule.{}".format(end_station_name): 1
+                    }
             }
         ]
         result = self.collection.aggregate(pipeline=pipeline)
+        return result
+
+    def get_train_by_line_direction_station_and_start_time(self, line, direction, starting_station, time):
+
+        result = self.collection.find_one({
+            "Line": str(line),
+            "Direction": direction,
+            "Schedule.{}".format(starting_station): {"$eq": time}
+        })
         return result
 
     def delay_train(self, schedule: Schedule, station_name: str, delay: timedelta) -> Schedule:
@@ -496,9 +534,11 @@ class ScheduleRepository:
                             }
                     }
             }
+
         for stop in schedule.schedule:
             if schedule.schedule[station_name] < schedule.schedule[stop]:
                 update["$set"]["Schedule.{}".format(stop)] = schedule.schedule[stop] + delay
+
         result = self.collection.update(
             {
                 "Line": schedule.line,
@@ -524,13 +564,14 @@ class ScheduleRepository:
         for stop in schedule.schedule:
             if schedule.schedule[start] < schedule.schedule[stop]:
                 update["$set"]["Schedule.{}".format(stop)] = schedule.schedule[stop] - timedelta(minutes=delay)
-        result = self.collection.update(
+        result = self.collection.find_one_and_update(
             {
                 "Line": schedule.line,
                 "Direction": schedule.direction,
                 "Schedule.{}".format(start): {"$eq": schedule.schedule[start]}
             },
-            update
+            update,
+            return_document=pymongo.ReturnDocument.AFTER
         )
         return result
 
@@ -540,6 +581,36 @@ class ScheduleRepository:
                 "Delay": {"$exists": True}
             }
         )
+        return result
+
+    def get_schedules_by_line_direction(self, line, direction):
+        result = self.collection.find(
+            {
+                "Line": str(line.upper()),
+                "Direction": direction
+            },
+            {"Schedule": 1, "Delay": 1, "_id": 0}
+        )
+        return result
+
+    def get_unique_line_direction(self):
+        pipeline = [
+            {
+                "$group": {
+                    "_id": {
+                        "Line": "$Line",
+                        "Direction": "$Direction"
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "Line": 1,
+                    "Direction": 1
+                }
+            }
+        ]
+        result = self.collection.aggregate(pipeline)
         return result
 
     def bulk_insert_schedules(self, schedules):
@@ -556,3 +627,18 @@ class ScheduleRepository:
         :return: None
         """
         self.collection.delete_many({})
+
+
+class TripRepository:
+    def __init__(self):
+        self.session = session
+
+    def add_trip(self, trip: Trip):
+        self.session.add(trip)
+        self.session.commit()
+
+    def get_trips_by_user_id(self, user_id):
+        query = self.session.query(Trip) \
+            .filter(Trip.user_id == user_id) \
+            .order_by(Trip.timestamp.desc())
+        return query

@@ -8,6 +8,8 @@ input[type=text], select {
   box-sizing: border-box;
 }
 
+
+
 input[type=submit] {
   width: 70%;
   background-color: #009879;
@@ -30,11 +32,10 @@ label {
   display: inline-block;
 
 }
-
+/*
 .content-section {
  position: fixed;
  top: 40%;
- left: 55%;
-  /* bring your own prefixes */
+ left: 50%;
  transform: translate(-50%, -50%);
-}
+} */

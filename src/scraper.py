@@ -147,8 +147,8 @@ def fix_exceptions(stations, addresses, lines):
             lines[i] = "N,Q,R,W"
         if station == "45 St":
             lines[i] == "N,R"
-        if station == "New Lots Av":
-            lines[i] = ""
+        # if station == "New Lots Av":
+            # lines[i] = ""
 
 
     return stations, addresses, lines

@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block content %}
 <head>
-    <meta charset="UTF-8">
-    <title>Lines</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
-
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/stations_by_line.css')}}">
 </head>
-<body>
-    <style> .navbar ul { list-style-type: none; }</style>
-    {{ nav.navbar.render() }}
+<div>
     <table class="styled-table">
         <thead>
             <tr>
                 <th>Line</th>
+                <th></th>
+                <th></th>
                 <th></th>
             </tr>
         </thead>
@@ -26,10 +22,24 @@
                         View Stops
                     </a>
                 </td>
+                {% if line in schedules %}
+                <td>
+                    <a href = {{ "schedules?line=" ~ line ~ "&direction=" ~ schedules[line][0] }} action="GET">
+                        {{ schedules[line][0] }} Schedule
+                    </a>
+                </td>
+                <td>
+                    <a href = {{ "schedules?line=" ~ line ~ "&direction=" ~ schedules[line][1] }} action="GET">
+                        {{ schedules[line][1] }} Schedule
+                    </a>
+                </td>
+                {% else %}
+                <td></td>
+                <td></td>
+                {% endif %}
             </tr>
         </tbody>
         {% endfor %}
     </table>
-
-</body>
-</html>
+</div>
+{% endblock content %}

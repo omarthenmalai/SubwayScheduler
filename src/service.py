@@ -54,94 +54,97 @@ class MapService:
 
         # Use the 2d array of lines to construct all possible paths
         paths = []
+        reduced_stations = []
         for t in itertools.product(*lines):
-            paths.append(t)
+            p, s = MapService._reduce_path(t, stations)
+            paths.append(p)
+            reduced_stations.append(s)
 
-        path_df = MapService._calculate_shortest_path(stations, paths)
+        path_df = MapService._calculate_shortest_path(paths, reduced_stations)
 
         return path_df
 
     @staticmethod
-    def _simplify_paths(path, stations):
-        j = 1
-        new_path = []
-        new_stations = [stations[0]]
-        while j < len(path):
-            if path[j] != path[j - 1]:
-                new_path.append(path[j])
-                new_stations.append(stations[j])
-            j += 1
-        print(new_path)
-        print(new_stations)
-        return path
+    def _reduce_path(path, stations):
+        reduced_paths = [path[0]]
+        reduced_stations = [stations[0]]
+        j = 0
+        while j < len(path) - 1:
+            if path[j] == path[j + 1]:
+                j += 1
+            else:
+                reduced_stations.append(stations[j + 1])
+                reduced_paths.append(path[j + 1])
+                j += 1
+        reduced_stations.append(stations[-1])
+
+        return reduced_paths, reduced_stations
 
     @staticmethod
-    def _calculate_shortest_path(stations, paths):
+    def _calculate_shortest_path(paths, reduced_stations):
         schedule_service = ScheduleService()
 
         fastest_path = paths[0]
         fastest_time_taken = timedelta(minutes=100000)
         fastest_path_times = []
+        transfers = 1000
         # start_time = datetime.now().replace(year=1900,  month=1, day=1)
-        start_time = datetime(year=1900, month=1, day=1, hour=12, minute=20)
+        start_time = datetime(year=1900, month=1, day=1, hour=12, minute=22)
 
-        visited_paths = {}
-
-        for path in paths:
+        for path, stations in zip(paths, reduced_stations):
             evaluate = True
-            # time = datetime.now().replace(year=1900, month=1, day=1, hour=19, minute=23)
             time = start_time
-            path_times = [time]
+            path_times = []
             for i in range(0, len(path)):
                 cur_start_station = stations[i]
                 cur_end_station = stations[i + 1]
 
-                # F ix path: temporary fix until we deal with express pathing later
+                # Fix path: temporary fix until we deal with express pathing later
                 curr_path = path[i]
                 if path[i] == "7X":
                     curr_path = "7"
                 elif path[i] == "6X":
                     curr_path = "6"
 
-                if cur_start_station.station_name + "/" + cur_end_station.station_name in visited_paths and \
-                        curr_path in visited_paths[cur_start_station.station_name + "/" + cur_end_station.station_name]:
-                    time = visited_paths[cur_start_station.station_name + "/" + cur_end_station.station_name][curr_path]
-                else:
-                    # Get the schedule with the desired departure and arrival time
-                    try:
-                        sched = schedule_service.get_next_train_by_station_name_and_line(cur_start_station,
-                                                                                         cur_end_station,
-                                                                                         curr_path,
-                                                                                         time)
-                    except IndexError:
-                        evaluate = False
-                        break
-                    if len(sched) == 0:
-                        print("ERROR: Couldn't Resolve the current path --> {}".format(path))
-                        evaluate = False
-                        break
+                # Get the schedule with the desired departure and arrival time
+                try:
+                    sched = schedule_service.get_next_train_by_station_name_and_line(cur_start_station,
+                                                                                     cur_end_station,
+                                                                                     curr_path,
+                                                                                     time)
+                except IndexError:
+                    evaluate = False
+                    break
+                if len(sched) == 0:
+                    print("ERROR: Couldn't Resolve the current path --> {}".format(path))
+                    evaluate = False
+                    break
 
-                    time = sched['Schedule'][cur_end_station.station_name]
-                    if not cur_start_station.station_name + "/" + cur_end_station.station_name in visited_paths:
-                        visited_paths[cur_start_station.station_name + "/" + cur_end_station.station_name] = {
-                            curr_path: time}
-                    else:
-                        visited_paths[cur_start_station.station_name + "/" + cur_end_station.station_name][
-                            curr_path] = time
-                path_times.append(time)
-            if time - start_time < fastest_time_taken and evaluate:
-                fastest_time_taken = time - start_time
+                departure_time = sched['Schedule'][cur_start_station.station_name]
+                arrival_time = sched['Schedule'][cur_end_station.station_name]
+                path_times.append([departure_time, arrival_time])
+                time = arrival_time.replace(day=1)
+
+            # If it takes less time, make that path the fastest path
+            if path_times[-1][1] - path_times[0][0] < fastest_time_taken and evaluate:
                 fastest_path = path
                 fastest_path_times = path_times
+                fastest_stations = stations
+                transfers = len(stations)
+            # if it takes the same amount of time, choose the path that has the least number of transfers
+            elif path_times[-1][1] - path_times[0][0] == fastest_time_taken and len(stations) < transfers and evaluate:
+                fastest_path = path
+                fastest_path_times = path_times
+                fastest_stations = stations
+                transfers = len(stations)
 
-        stations = np.array([name.station_name for name in stations]).T
-        fastest_path_times = np.array(fastest_path_times).T
-        fastest_path = [fastest_path[i] for i in range(len(fastest_path))]
-        fastest_path.append("")
-        fastest_path = np.array(fastest_path).T
         train_lines = []
         for i in range(0, len(stations) - 1):
-            train_line = TrainLine(start=stations[i], stop=stations[i + 1], line=fastest_path[i])
+            train_line = TrainLine(start=fastest_stations[i],
+                                   stop=fastest_stations[i + 1],
+                                   line=fastest_path[i],
+                                   departure_time=fastest_path_times[i][0].strftime("%H:%M"),
+                                   arrival_time=fastest_path_times[i][1].strftime("%H:%M"))
             train_lines.append(train_line)
 
         return train_lines, fastest_path_times
@@ -228,6 +231,9 @@ class MapService:
         subway_station = SubwayStation.from_node(node=node)
         return subway_station
 
+    def get_distinct_lines(self):
+        return self.repository.get_distinct_lines()
+
     def set_station_status_out_of_order(self,
                                         station: SubwayStation):
         """
@@ -300,9 +306,6 @@ class MapService:
             # CASE: SubwayStation between two other SubwayStations for the given line
             else:
                 train_line = TrainLine(start=start_node, stop=end_node, line=line)
-            print(start_node)
-            print(end_node)
-            print(train_line)
             # If the reroute is not None, then we know that we are rerouting a REROUTES relationship.
             if reroute is not None:
                 self.repository.create_reroute(train_line=train_line, reroute=reroute)
@@ -393,9 +396,17 @@ class ScheduleService:
 
     def delay_train(self, schedule: Schedule, station_name: str, delay: timedelta):
         if schedule.delay is not None:
-            self.remove_delay(schedule=schedule)
+            new_sched = self.remove_delay(schedule=schedule)
+            print(new_sched)
+            schedule = Schedule.from_mongo(new_sched)
         result = self.repository.delay_train(schedule=schedule, station_name=station_name, delay=delay)
         return result
+
+    def get_train_by_line_direction_station_and_start_time(self, line, direction, starting_station, time):
+        result = self.repository.get_train_by_line_direction_station_and_start_time(line, direction,
+                                                                                    starting_station, time)
+        return Schedule.from_mongo(result)
+
 
     def remove_delay(self, schedule: Schedule):
         if schedule.delay is None:
@@ -415,10 +426,36 @@ class ScheduleService:
             direction = schedule["Direction"]
             starting_station = schedule["Delay"]["start"]
             delay = schedule["Delay"]["time"]
-            time = schedule["Schedule"][min(schedule["Schedule"], key=schedule["Schedule"].get)]
+            time = schedule["Schedule"][list(schedule["Schedule"].keys())[0]].strftime("%H:%M")
             output.append([line, direction, time, starting_station, delay])
         df = pd.DataFrame(output[1:], columns=output[0]).sort_values(by=["Line", "Time"])
         return df
+
+    def get_schedules_by_line_direction(self, line, direction):
+        result = self.repository.get_schedules_by_line_direction(line=line, direction=direction)
+        results = [x for x in result]
+        if len(results) > 0:
+            schedules = sorted(results, key=lambda schedule: schedule['Schedule'][min(schedule['Schedule'],
+                                                                                      key=schedule["Schedule"].get)])
+            stations = list(schedules[0]["Schedule"].keys())
+            schedules = [ [val.strftime("%H:%M") for val in schedule["Schedule"].values()] for schedule in schedules]
+            return stations, schedules
+        else:
+            return None
+
+
+    def get_unique_line_direction(self):
+        result = self.repository.get_unique_line_direction()
+        combinations = [Schedule(line=x['_id']['Line'], direction=x['_id']['Direction']) for x in result]
+
+
+        line_direction_dict = {}
+        for schedule in combinations:
+            if schedule.line in line_direction_dict:
+                line_direction_dict[schedule.line].append(schedule.direction)
+            else:
+                line_direction_dict[schedule.line] = [schedule.direction]
+        return line_direction_dict
 
 
 class UserService:
@@ -436,24 +473,17 @@ class UserService:
         )
         user.password = salt + key
 
-        # print(len(storage))
-        # print(type(storage))
+        try:
+            new_user = self.repository.add_user(user=user)
+            return new_user
+        except IntegrityError:
+            return None
 
-        self.repository.add_user(user=user)
-
-    def add_many_users(self, user_array: []):
-        self.repository.add_many_users(user_array)
-
-    def get_user_by_email(self,
-                          email: User):
-        result = self.repository.get_user_by_email(email)[0].__dict__
-        return result
-
-    def login_user(self,
-                   email: User,
-                   password: User):
+    def login_user(self, email, password):
         user = self.get_user_by_email(email)
-        actual_password_salt = user['password']
+        if user is None:
+            return None
+        actual_password_salt = user.password
         password_to_check = password
 
         salt_from_storage = actual_password_salt[:32]  # 32 is the length of the salt
@@ -466,9 +496,24 @@ class UserService:
             dklen=128
         )
         if new_key == key_from_storage:
-            print('Password is correct')
-            x = True
+            return user
         else:
-            print('Password is incorrect')
-            x = False
-        return x
+            return None
+
+    def get_user_by_email(self, email):
+        return self.repository.get_user_by_email(email)
+
+    def add_many_users(self, user_array: []):
+        self.repository.add_many_users(user_array)
+
+
+class TripService:
+    def __init__(self):
+        self.repository = TripRepository()
+
+    def add_trip(self, trip: Trip):
+        self.repository.add_trip(trip)
+
+    def get_trips_by_user_id(self, user_id):
+        trips = self.repository.get_trips_by_user_id(user_id)
+        return [x for x in trips]

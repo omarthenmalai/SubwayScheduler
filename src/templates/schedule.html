@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block content %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/plan_trip.css')}}">
+
+</head>
+<table class="styled-table">
+    <thead>
+        <tr>
+            {% if is_admin == True %}
+            <th></th>
+            {% endif %}
+            {% for station in stations %}
+            <th>{{ station }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for schedule in schedules %}
+        <tr class="active_row">
+            {% if is_admin == True %}
+            <td>
+                <button type="button" data-toggle="modal" data-target="{{ "#" + schedule[0] }}">Delay</button>
+            </td>
+            {% endif %}
+            {% for time in schedule%}
+            <td>{{ time }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+ <!-- Modal -->
+{% for schedule in schedules %}
+  <div class="modal fade" id={{ schedule[0] }} role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+<!--          <button type="button" class="close" data-dismiss="modal">&times;</button>-->
+          <h4 class="modal-title">Delay Selected Train</h4>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="/delay-train">
+              <label>
+                  Starting Station:
+              </label>
+              <select name="station">
+                  {% for station in stations %}
+                  <option>
+                      {{ station }}
+                  </option>
+                  {% endfor %}
+              </select>
+              <label>
+                  Delay Time:
+              </label>
+              <select name="delay">
+                  {% for i in range(1,31) %}
+                  <option>
+                      {{ i }}
+                  </option>
+                  {% endfor %}
+              </select>
+              <input type="submit" value="Delay">
+              <input type="hidden" name="line" value={{ line }} />
+              <input type="hidden" name="direction" value={{ direction }} />
+              <input type="hidden" name="time" value={{ schedule[0] }} />
+              <input type="hidden" name="starting_station" value="{{ stations[0] }}" />
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endfor %}
+{% endblock content %}

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
+</head>
+{% if trips is not none %}
+<body>
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Starting Station</th>
+                <th>Ending Station</th>
+                <th>Time Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for trip in trips %}
+            <tr class="active-row">
+                <td>{{ trip.timestamp }}</td>
+                <td>{{ trip.start }}</td>
+                <td>{{ trip.stop }}</td>
+                <td>{{ trip.time }}</td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</body>
+{% else %}
+<h2>
+    No trips have been logged.
+</h2>
+{% endif %}
+{% endblock content %}

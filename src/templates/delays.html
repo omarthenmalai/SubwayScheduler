@@ -1,34 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block content %}
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/stations_by_line.css')}}">
+
 </head>
 <body>
-    <style> .navbar ul { list-style-type: none; }</style>
-    {{ nav.navbar.render() }}
-    <table class="styled-table">
-        <thead>
-            <tr>
-                <th>Line</th>
-                <th>Direction</th>
-                <th>Time</th>
-                <th>Starting Station</th>
-                <th>Delay</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for index, row in delayed_schedules.iterrows() %}
-            <tr class="active-row">
-                <td>{{ row['Line'] }}</td>
-                <td>{{ row['Direction'] }}</td>
-                <td>{{ row['Time'] }}</td>
-                <td>{{ row['Starting Station'] }}</td>
-                <td>{{ row['Delay'] }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% if delayed_schedules is not none %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Line</th>
+                    <th>Direction</th>
+                    <th>Time</th>
+                    <th>Starting Station</th>
+                    <th>Delay</th>
+                    {% if is_admin %}
+                    <th></th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for index, row in delayed_schedules.iterrows() %}
+                <tr class="active-row">
+                    <td>{{ row['Line'] }}</td>
+                    <td>{{ row['Direction'] }}</td>
+                    <td>{{ row['Time'] }}</td>
+                    <td>{{ row['Starting Station'] }}</td>
+                    <td>{{ row['Delay'] }}</td>
+                    {% if is_admin %}
+                    <td>
+                        <a href="{{ 'remove-delay/%s/%s/%s/%s' % (row['Line'], row['Direction'], row['Time'], row['Starting Station']) }}"
+                        action="GET">
+                            Remove Delay
+                        </a>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <h1>
+        There are currently no delays.
+    </h1>
+    {% endif %}
 </body>
-</html>
+{% endblock content %}

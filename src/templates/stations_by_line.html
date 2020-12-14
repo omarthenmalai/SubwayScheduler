@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/stations_by_line.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}">
     <title>{{ line + " Line" }}</title>
 </head>
 <body>
-    <style> .navbar ul { list-style-type: none; }</style>
-    {{ nav.navbar.render() }}
     <table class="styled-table">
         <thead>
             <tr>
@@ -16,7 +13,7 @@
                 <th>Location</th>
                 <th>Borough</th>
                 <th>Status</th>
-                {% if user_type == "admin" %}
+                {% if is_admin == True %}
                 <th>
                     Options
                 </th>
@@ -30,9 +27,9 @@
                 <td>{{ station.entrances }}</td>
                 <td>{{ station.borough }}</td>
                 <td>{{ station.status }}</td>
-                {% if user_type == "admin" %}
+                {% if is_admin == True %}
                 <td>
-                    <a href="{{ "/" ~ line ~ "/" ~ station.station_name ~ "/" ~ station.entrances}}">
+                    <a href="{{ "/change-status/" ~ line ~ "/" ~ station.station_name ~ "/" ~ station.entrances}}">
                         Change Status
                     </a>
                 </td>
@@ -42,5 +39,4 @@
         {% endfor %}
     </table>
 </body>
-
-</html>
+{% endblock content %}

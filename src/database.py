@@ -74,6 +74,7 @@ def init_schedule_db():
         df.dropna(inplace=True)
         stations = df.columns.values.tolist()
         stations = [' '.join(station.rstrip().split(" ")[:-1]) for station in stations]
+        stations = fix_station_name(stations)
         split_file_name = filename.split('/')[1].split('-')
 
         line = str(split_file_name[0])
@@ -100,8 +101,14 @@ def init_schedule_db():
                 continue
             curr_stations = [stations[i] for i in good_indices]
             try:
-                res = {curr_stations[i]: datetime.strptime(times[i], "%H:%M") for i in range(len(curr_stations))}
-                # res = {curr_stations[i]: times[i] for i in range(len(curr_stations))}
+                new_times = [datetime.strptime(time, "%H:%M") for time in times]
+                prev_time = new_times[0]
+                for j in range(1, len(new_times)):
+                    if new_times[j] < prev_time:
+                        new_times[j] = new_times[j].replace(year=1900, month=1, day=2)
+                        prev_time = new_times[j]
+
+                res = {curr_stations[j]: new_times[j] for j in range(len(curr_stations))}
             except ValueError:
                 continue
             train = {
@@ -114,3 +121,22 @@ def init_schedule_db():
 
         schedule_repository.bulk_insert_schedules(documents_array)
         # collection.insert_many(documents_array)
+
+
+def fix_station_name(stations):
+    for i in range(0, len(stations)):
+        station = stations[i]
+
+        if station == "Wtc - Cortlandt" or station == "Park Place Station" or station == "World Trade Center":
+            stations[i] = "World Trade Center"
+        if station == "51 St" or station == "Lexington Av/53 St":
+            stations[i] = "Lexington Av/53 St"
+        if station == "Lexington Av/63 St" or station == "Lexington Av / 59 St":
+            stations[i] = "Lexington Av / 59 St"
+        if station == "Broadway-Lafayette St" or station == "Bleecker St":
+            stations[i] = "Bleecker St"
+        if station == "61 St":
+            stations[i] = "New Utrecht Av"
+
+
+    return stations

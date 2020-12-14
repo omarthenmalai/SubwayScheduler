@@ -3,17 +3,19 @@ from sqlalchemy import create_engine, Integer, Float, String, Column, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from neo4j.graph import Node
 import numpy as np
+from datetime import datetime, timedelta
 from sqlalchemy import create_engine, Integer, String, Column, Date, ForeignKey, \
-    PrimaryKeyConstraint, func, desc, MetaData, Table
+    PrimaryKeyConstraint, func, desc, MetaData, Table, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, backref, relationship
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.types import LargeBinary, Boolean
+from flask_login import UserMixin
 
 Base = declarative_base()
 
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'users'
 
     user_id = Column(Integer, primary_key=True)
@@ -25,6 +27,9 @@ class User(Base):
         self.email = email
         self.password = password
         self.is_admin = is_admin
+
+    def get_id(self):
+        return self.user_id
 
     def __repr__(self):
         # obj = {
@@ -224,7 +229,9 @@ class TrainLine:
     def __init__(self,
                  start: SubwayStation = None,
                  stop: SubwayStation = None,
-                 line: str = None) -> TrainLine:
+                 line: str = None,
+                 departure_time=None,
+                 arrival_time=None) -> TrainLine:
         '''
 
         :param start: The 'starting' SubwayStation for the given edge
@@ -234,6 +241,8 @@ class TrainLine:
         self._start = start
         self._stop = stop
         self._line = line
+        self._departure_time = departure_time
+        self._arrival_time = arrival_time
 
     @property
     def start(self):
@@ -262,6 +271,24 @@ class TrainLine:
         self._line = value
         return self
 
+    @property
+    def departure_time(self):
+        return self._departure_time
+
+    @departure_time.setter
+    def departure_time(self, value):
+        self._departure_time = value
+        return self
+
+    @property
+    def arrival_time(self):
+        return self._arrival_time
+
+    @arrival_time.setter
+    def arrival_time(self, value):
+        self._arrival_time = value
+        return self
+
     def __repr__(self):
         return "<TrainLine(start={0}, stop={1}, line={2})>".format(self.start, self.stop, self.line)
 
@@ -270,36 +297,47 @@ class Schedule:
     def __init__(self,
                  line: str = None,
                  direction: str = None,
-                 schedule: [] = None):
-        self.line = line
-        self.direction = direction
-        self.schedule = schedule
+                 schedule: [] = None,
+                 delay: {} = None):
+        self._line = line
+        self._direction = direction
+        self._schedule = schedule
+        self._delay = delay
 
     @property
     def line(self):
-        return self.line
+        return self._line
 
     @line.setter
     def line(self, value):
-        self.line = value
+        self._line = value
         return self
 
     @property
     def direction(self):
-        return self.direction
+        return self._direction
 
     @direction.setter
     def direction(self, value):
-        self.direction = value
+        self._direction = value
         return self
 
     @property
     def schedule(self):
-        return self.schedule
+        return self._schedule
 
     @schedule.setter
     def schedule(self, value):
-        self.schedule = value
+        self._schedule = value
+        return self
+
+    @property
+    def delay(self):
+        return self._delay
+
+    @delay.setter
+    def delay(self, value):
+        self._delay = delay
         return self
 
     @classmethod
@@ -309,8 +347,30 @@ class Schedule:
         :param schedule: a Mongo db querey result
         :return: A SubwayStation object with properties equal to the property of the node
         '''
+        if "Delay" in query:
+            delay = query["Delay"]
+        else:
+            delay = None
         return cls(
             line=query['Line'],
             direction=query['Direction'],
-            schedule=query['Schedule']
+            schedule=query['Schedule'],
+            delay=delay
         )
+
+
+class Trip(Base):
+    __tablename__ = 'trips'
+
+    user_id = Column(Integer, primary_key=True)
+    timestamp = Column(DateTime, primary_key=True)
+    start = Column(String(100))
+    stop = Column(String(100))
+    time = Column(Integer)
+
+    def __init__(self, user_id, start, stop, time):
+        self.user_id = user_id
+        self.start = start
+        self.stop = stop
+        self.time = time
+        self.timestamp = datetime.now()
