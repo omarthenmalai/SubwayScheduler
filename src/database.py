@@ -10,6 +10,7 @@ from os.path import isfile, join
 from datetime import datetime
 from sqlalchemy import Table
 from sqlalchemy import Integer, String, Column, LargeBinary, DateTime
+from sqlalchemy.exc import OperationalError
 
 # Local imports
 from src.models import SubwayStation, TrainLine, Schedule

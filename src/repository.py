@@ -4,26 +4,23 @@ from neo4j.graph import Relationship
 
 from src.models import *
 from src import login_manager
-from neo4j import GraphDatabase
 from typing import List
 import pymongo
 from bson import SON
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from datetime import timedelta
+from src import mysql_engine, neo4j_driver, mongo_client
 
-neo4j_driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "root"))
 
-client = pymongo.MongoClient('mongodb://localhost:27017/')
-client.start_session()
-collection = client['Train']['schedule']
+mongo_client.start_session()
+collection = mongo_client['Train']['schedule']
 
-engine = create_engine('mysql+pymysql://root:123456@localhost/ece464_final')
-connection = engine.connect()
 
-Session = sessionmaker(bind=engine)
+
+Session = sessionmaker(bind=mysql_engine)
 session = Session()
-metadata = MetaData(engine)
+metadata = MetaData(mysql_engine)
 
 
 
@@ -39,7 +36,6 @@ class UserRepository:
     """
     def __init__(self):
         self.session = session
-        self.connection = connection
 
     def add_user(self, user: User):
         """
@@ -523,7 +519,7 @@ class ScheduleRepository:
                     }
             },
             {
-                "$sort": SON([("Schedule.{}".format(start_station), 1)])
+                "$sort": SON([("Schedule.{}".format(end_station), 1)])
             },
             {
                 "$limit": 1

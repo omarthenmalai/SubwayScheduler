@@ -87,8 +87,7 @@ class MapService:
             else:
                 paths.append(p)
                 reduced_stations.append(s)
-
-        shortest_path = MapService._calculate_shortest_path(paths[:100], reduced_stations[:100])
+        shortest_path = MapService._calculate_shortest_path(paths, reduced_stations)
 
         return shortest_path
 
@@ -142,7 +141,7 @@ class MapService:
 
         visited_paths = {}
 
-        start_time = datetime.now().replace(year=1900,  month=1, day=1, hour=13, minute=48)
+        start_time = datetime(year=1900,  month=1, day=1, hour=13, minute=48, second=0)
 
         for path, stations in zip(paths, reduced_stations):
             evaluate = True
@@ -172,22 +171,18 @@ class MapService:
                 departure_time = sched['Schedule'][cur_start_station.schedule_key()]
                 arrival_time = sched['Schedule'][cur_end_station.schedule_key()]
                 path_times.append([departure_time, arrival_time])
-                time = arrival_time.replace(day=1)
-
-            # Path was not succesfully evaluated. continue
-            # if len(path_times) < len(path):
-            #     continue
+                time = arrival_time.replace(day=1, second=0)
 
 
             # If it takes less time, make that path the fastest path
-            if evaluate and path_times[-1][1] - path_times[0][0] < fastest_time_taken:
+            if evaluate and path_times[-1][1] - start_time < fastest_time_taken:
                 fastest_path = path
                 fastest_path_times = path_times
                 fastest_stations = stations
                 fastest_time_taken = path_times[-1][1] - path_times[0][0]
                 transfers = len(stations)
             # if it takes the same amount of time, choose the path that has the least number of transfers
-            elif evaluate and path_times[-1][1] - path_times[0][0] == fastest_time_taken and len(stations) < transfers:
+            elif evaluate and path_times[-1][1] - start_time == fastest_time_taken and len(stations) < transfers:
                 fastest_path = path
                 fastest_path_times = path_times
                 fastest_stations = stations
@@ -246,7 +241,6 @@ class MapService:
                     split_reroutes = reroutes[i].split("?")
                     rerouted_station = self.get_station_by_name_and_entrance(reroutes[i].split("?")[0],
                                                                              reroutes[i].split("?")[1])
-
                     if split_reroutes[-1] == "start":
                         for j in range(0, len(reroutes)):
                             split_reroutes = reroutes[j].split("?")
@@ -266,32 +260,54 @@ class MapService:
 
                             elif j == len(reroutes) - 1:
                                 start.append(rerouted_station)
-                                stop.append(SubwayStation.from_node(record['nodes'][0]))
+                                stop.append(SubwayStation.from_node(record['nodes'][1]))
                             else:
+                                next_rerouted_station = self.get_station_by_name_and_entrance(
+                                        reroutes[j + 1].split("?")[0],
+                                        reroutes[j + 1].split("?")[1])
                                 start.append(rerouted_station)
-                                stop.append(rerouted_station)
+                                stop.append(next_rerouted_station)
                         break
 
-                    elif split_reroutes[-1] == "end":
-                        # if len(reroutes) == 1:
+                    elif reroutes[-1].split("?")[-1] == "end":
                         for j in range(0, len(reroutes)):
                             rerouted_station = self.get_station_by_name_and_entrance(reroutes[j].split("?")[0],
                                                                                      reroutes[j].split("?")[1])
-                            if j == len(reroutes) - 1:
-                                stop.append(rerouted_station)
-                                if j-1 != -1:
-                                    prev_rerouted_station = self.get_station_by_name_and_entrance(
-                                        reroutes[j-1].split("?")[0],
-                                        reroutes[j-1].split("?")[1])
-                                    start.append(prev_rerouted_station)
-                                else:
-                                    start.append(SubwayStation.from_node(record['nodes'][0]))
 
-                            elif j == 0:
+                            if j == 0:
                                 start.append(SubwayStation.from_node(record['nodes'][0]))
                                 stop.append(rerouted_station)
+                            elif j == len(reroutes)-1:
+                                prev_rerouted_station = self.get_station_by_name_and_entrance(
+                                    reroutes[j-1].split("?")[0],
+                                    reroutes[j-1].split("?")[1])
+                                start.append(prev_rerouted_station)
+                                stop.append(rerouted_station)
+
+
+                            # if j == len(reroutes) - 1:
+                            #     stop.append(rerouted_station)
+                            #     if j-1 != -1:
+                            #         prev_rerouted_station = self.get_station_by_name_and_entrance(
+                            #             reroutes[j-1].split("?")[0],
+                            #             reroutes[j-1].split("?")[1])
+                            #         start.append(prev_rerouted_station)
+                            #     else:
+                            #         start.append(SubwayStation.from_node(record['nodes'][0]))
+
+                            # elif j == 0:
+                            #     start.append(SubwayStation.from_node(record['nodes'][0]))
+                            #     stop.append(rerouted_station)
                             else:
-                                start.append(rerouted_station)
+                                prev_rerouted_station = self.get_station_by_name_and_entrance(
+                                    reroutes[j-1].split("?")[0],
+                                    reroutes[j-1].split("?")[1])
+                                # prev_rerouted_station = self.get_station_by_name_and_entrance(
+                                #     reroutes[j - 1].split("?")[0],
+                                #     reroutes[j - 1].split("?")[1])
+                                # start.append(prev_rerouted_station)
+                                # stop.append(rerouted_station)
+                                start.append(prev_rerouted_station)
                                 stop.append(rerouted_station)
                         break
 
@@ -317,6 +333,7 @@ class MapService:
             else:
                 start.append(SubwayStation.from_node(record['nodes'][0]))
                 stop.append(SubwayStation.from_node(record['nodes'][1]))
+
 
         # Get starting station
         start_station = None

@@ -30,8 +30,9 @@
         </tbody>
         {% endfor %}
     </table>
-    <a href="{{ '/log-trip/%s/%s/%s/%s' % (train_lines[0].start.station_name,
-        train_lines[-1].stop.station_name, train_lines[0].departure_time, train_lines[-1].arrival_time) }}" >
+    <a href="{{ '/log-trip/%s/%s/%s/%s/%s/%s' % (train_lines[0].start.station_name, train_lines[0].start.entrances,
+        train_lines[-1].stop.station_name, train_lines[-1].stop.entrances, train_lines[0].departure_time,
+        train_lines[-1].arrival_time) }}" >
         <input type="submit" value="Log Trip"/>
     </a>
 </body>

@@ -8,7 +8,6 @@ from src.forms import LoginForm, RegistrationForm
 from src.service import MapService, ScheduleService, UserService, TripService
 from src.repository import MapRepository, ScheduleRepository, UserRepository
 from src.models import User, Schedule, Trip, SubwayStation, TrainLine
-from src.database import init_map_db
 from src import app
 
 nav = Nav(app)
@@ -203,11 +202,12 @@ def delays():
 
 
 
-@app.route('/log-trip/<start_name>/<stop_name>/<start_time>/<stop_time>', methods=["GET"])
+@app.route('/log-trip/<start_name>/<start_entrance>/<stop_name>/<stop_entrance>/<start_time>/<stop_time>', methods=["GET"])
 @login_required
-def log_trip(start_name, stop_name, start_time, stop_time):
+def log_trip(start_name, start_entrance, stop_name, stop_entrance, start_time, stop_time):
     time = (datetime.strptime(stop_time, "%H:%M") - datetime.strptime(start_time, "%H:%M")).seconds//60
-    trip = Trip(user_id=current_user.user_id, start=start_name, stop=stop_name, time=time)
+    trip = Trip(user_id=current_user.user_id, start="{}, {}".format(start_name, start_entrance),
+                stop="{}, {}".format(stop_name, stop_entrance), time=time)
     trip_service.add_trip(trip=trip)
 
 

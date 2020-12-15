@@ -21,7 +21,7 @@ class User(Base, UserMixin):
     user_id = Column(Integer, primary_key=True)
     email = Column(String(50), unique=True)
     password = Column(LargeBinary())
-    is_admin = Column(Boolean, unique=False, default=False)
+    is_admin = Column(Boolean, default=False)
 
     def __init__(self, email, password, is_admin):
         self.email = email
