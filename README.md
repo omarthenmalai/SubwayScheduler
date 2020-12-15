@@ -12,13 +12,13 @@ When setting up `Neo4j` ensure that you download the `Graph Data Science Library
 
 # Usage
 
-Run 
-```python -m src.database```
-to populate the databases. The `users` table and `trips` table will be empty
+To populate the databases, run 
+```python -m src.database```.
+The `users` table and `trips` table will be empty
 
-Run
-```python -m src.app```
-to start the Flask application on `http://localhost:5000`
+To start the Flask application, run
+```python app```.
+The app will be launched on `http://localhost:5000`.
 
 To create an `admin` account, run
 ```python -m src.create_admin -e <email> -p <password>```
