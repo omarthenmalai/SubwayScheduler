@@ -2,6 +2,11 @@
 {% block content %}
 <head>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/plan_trip.css')}}">
+    <script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+        });
+    </script>
 </head>
 <div class="content-section">
     <h2>
@@ -34,9 +39,5 @@
     </form>
 </div>
 
-<script>
-    $(document).ready(function() {
-        $('.js-example-basic-single').select2();
-        });
-</script>
 {% endblock content %}
+

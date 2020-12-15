@@ -8,14 +8,21 @@ from os import walk
 from os import listdir
 from os.path import isfile, join
 from datetime import datetime
+from sqlalchemy import Table
+from sqlalchemy import Integer, String, Column, LargeBinary, DateTime
 
 # Local imports
 from src.models import SubwayStation, TrainLine, Schedule
 from src.service import MapService, ScheduleService
-from src.repository import ScheduleRepository, MapRepository
+from src.repository import ScheduleRepository, MapRepository, metadata
 
 
 def init_map_db():
+    """
+    Initializes the graph database
+    :return: None
+    """
+
     # Initialize MapService to add the SubwayStations and CONNECTS relationships
     map_repo = MapRepository()
     map_repo.clear_db()
@@ -54,14 +61,7 @@ def init_map_db():
             total_nodes += 1
 
 
-# mongodb://localhost:27017/
 def init_schedule_db():
-    # myclient = MongoClient(
-    #     'mongodb+srv://m001-student:m001-mongodb-basics@sandbox.wweug.mongodb.net/<dbname>?retryWrites=true&w=majority')
-
-    # db = myclient["Train"]
-    # collection = db["schedule"]
-
     schedule_repository = ScheduleRepository()
     schedule_repository.clear_db()
 
@@ -72,9 +72,10 @@ def init_schedule_db():
         filename = str(filtered[i])
         df = pd.read_csv(filename)
         df.dropna(inplace=True)
-        stations = df.columns.values.tolist()
-        stations = [' '.join(station.rstrip().split(" ")[:-1]) for station in stations]
-        stations = fix_station_name(stations)
+        stations_lines = df.columns.values.tolist()
+        stations = [' '.join(station.rstrip().split(" ")[:-1]) for station in stations_lines]
+        lines = [lines.rstrip().split(" ")[-1][1:-1] for lines in stations_lines]
+        stations = fix_schedule_exceptions(stations, lines)
         split_file_name = filename.split('/')[1].split('-')
 
         line = str(split_file_name[0])
@@ -88,17 +89,15 @@ def init_schedule_db():
             good_indices = [i for i in range(0, len(values)) if values[i] != "—" and values[i] != np.nan
                             and values[i] != "-"]
             try:
-                times = [values[i].rstrip()\
-                             .replace("#", '')\
-                             .replace("*", "")\
-                             .replace("+", "")\
-                             .replace("^", "")\
-                             .lstrip()\
+                times = [values[i].rstrip() \
+                             .replace("#", '') \
+                             .replace("*", "") \
+                             .replace("+", "") \
+                             .replace("^", "") \
+                             .lstrip() \
                              .rstrip() for i in good_indices]
-                # times = [int(time.split(":")[0])*100 + int(time.split(":")[1]) for time in times]
             except (IndexError, ValueError) as e:
                 print(e)
-                continue
             curr_stations = [stations[i] for i in good_indices]
             try:
                 new_times = [datetime.strptime(time, "%H:%M") for time in times]
@@ -122,25 +121,80 @@ def init_schedule_db():
         schedule_repository.bulk_insert_schedules(documents_array)
 
 
-def fix_station_name(stations):
+def fix_schedule_exceptions(stations, lines):
+    """
+    Fixes errors in station names and lines for the Schedule Collection
+    :param stations: list of stations
+    :param lines: list of lines
+    :return:
+    """
     for i in range(0, len(stations)):
         station = stations[i]
-
         if station == "Wtc - Cortlandt" or station == "Park Place Station" or station == "World Trade Center":
             stations[i] = "World Trade Center"
+            lines[i] = "1,2,3,A,C,E,N,Q,R,W"
         if station == "51 St" or station == "Lexington Av/53 St":
             stations[i] = "Lexington Av/53 St"
+            lines[i] = "4,6,6X,E,M"
         if station == "Lexington Av/63 St" or station == "Lexington Av / 59 St":
             stations[i] = "Lexington Av / 59 St"
+            lines[i] = "4,5,6,F,N,Q,R"
         if station == "Broadway-Lafayette St" or station == "Bleecker St":
             stations[i] = "Bleecker St"
+            lines[i] = "4,6,6X,B,D,F,M"
+        if station == "E 180th":
+            lines[i] = "2,5"
         if station == "61 St":
             stations[i] = "New Utrecht Av"
+            lines[i] = "D,N,W"
+        if station == "Canal St" and "6" in lines[i]:
+            lines[i] = "N,Q,R,J,Z,4,6"
+        if station == "East 174 Street Station Subway":
+            lines[i] = "2,5"
+        if station == "Jay St - Metrotech":
+            lines[i] = "A,C,F,N,Q,R"
+        if station == "45 St":
+            lines[i] = "N,R"
+        if station == "Court St":
+            lines[i] = "N,Q,R"
+        if station == "Rector St" and lines[i] == "N,R":
+            lines[i] = "N,Q,R"
+        if station == "City Hall":
+            lines[i] = "N,Q,R"
+        if station == "Whitehall St":
+            lines[i] = "N,Q,R,W"
+        if station == "45 St":
+            lines[i] = "N,R"
 
-
+    stations = ["{} [{}]".format(station, ','.join(sorted(line.split(','))).upper()) for station, line in
+                zip(stations, lines)]
     return stations
+
+
+def init_user_and_trip_db():
+    """
+    Drops the user and trip tables and then instantiates them
+    :return: None
+    """
+    users = Table('users', metadata,
+                  Column('user_id', Integer, primary_key=True),
+                  Column('email', String(50)),
+                  Column('password', LargeBinary()),
+                  Column('is_admin', Integer, default=0))
+
+    trips = Table('trips', metadata,
+                  Column('user_id', Integer, primary_key=True),
+                  Column('timestamp', DateTime, primary_key=True),
+                  Column('start', String(100)),
+                  Column('stop', String(100)),
+                  Column('time', Integer))
+
+
+    metadata.drop_all()
+    metadata.create_all()
 
 
 if __name__ == "__main__":
     init_map_db()
-    #init_schedule_db()
+    init_schedule_db()
+    init_user_and_trip_db()

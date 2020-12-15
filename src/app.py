@@ -84,16 +84,20 @@ def plan_trip():
         except TypeError:
             return "ERROR: Invalid query string"
 
+        # extract station properties from query string
         start_name = start_station[0]
         start_entrance = start_station[1]
 
         end_name = end_station[0]
         end_entrance = end_station[1]
 
+        # Get the starting and ending stations
         start = map_service.get_station_by_name_and_entrance(station_name=start_name,
                                                              entrance=start_entrance)
         end = map_service.get_station_by_name_and_entrance(station_name=end_name,
                                                            entrance=end_entrance)
+
+        # Get the shortest path
         shortest_path, times = map_service.get_shortest_path(start_station=start, stop_station=end)
         if shortest_path is None or len(times) == 0:
             return "Could not find a path!"
@@ -164,7 +168,6 @@ def delay_train():
 
         schedule = schedule_service.get_train_by_line_direction_station_and_start_time(line, direction,
                                                                                        starting_station, time)
-        print(schedule.delay)
         schedule_service.delay_train(schedule, station_name, timedelta(minutes=int(delay)))
 
         return redirect(url_for("schedules", line=line, direction=direction))
@@ -178,7 +181,7 @@ def remove_delay(line, direction, time, starting_station):
         return redirect(url_for("lines"))
     else:
         time = datetime.strptime(time, "%H:%M")
-        print(time)
+
         # Get the schedule with the delay
         schedule = schedule_service.get_train_by_line_direction_station_and_start_time(line=line,
                                                                                        direction=direction,

@@ -7,15 +7,23 @@ import itertools
 import os
 import hashlib
 from datetime import datetime, timedelta
+from sqlalchemy.exc import IntegrityError
 
 
 class MapService:
-
+    """
+    Class that handles all intermediate logic for the Neo4j graph database
+    """
     def __init__(self):
         self.repository = MapRepository()
 
     def create_station(self,
                        station: SubwayStation):
+        """
+        Creates a SubwayStation node from the SubwayStation object
+        :param station: SubwayStation object
+        :return:
+        """
         result = self.repository.create_station(station)
         if result is None:
             return None
@@ -24,6 +32,11 @@ class MapService:
 
     def create_connection(self,
                           train_line: TrainLine):
+        """
+        Creates a CONNECTS relationship from the TrainLine object
+        :param train_line: TrainLine object
+        :return:
+        """
         result = self.repository.create_connection(train_line)
         if result is None:
             return None
@@ -32,8 +45,13 @@ class MapService:
 
     def get_shortest_path(self,
                           start_station: SubwayStation,
-                          stop_station: SubwayStation):
-
+                          stop_station: SubwayStation) -> List[TrainLine]:
+        """
+        Gets the shortest paths between two SubwayStation nodes
+        :param start_station: the starting node
+        :param stop_station: the ending node
+        :return: List[TrainLine] objects describing the route taken
+        """
         result = self.repository.shortest_path(start_station, stop_station)
 
         # Iterate through the path and append stations to an array
@@ -45,6 +63,7 @@ class MapService:
         # Add the stop station to the array
         stations.append(stop_station)
 
+
         # Iterate through the stations in the path adding the lines connecting each pair of stations
         # to an array
         lines = []
@@ -55,17 +74,41 @@ class MapService:
         # Use the 2d array of lines to construct all possible paths
         paths = []
         reduced_stations = []
+
+        min_transfers = 10000
+
         for t in itertools.product(*lines):
-            p, s = MapService._reduce_path(t, stations)
-            paths.append(p)
-            reduced_stations.append(s)
+            p, s = MapService._reduce_path(list(t), list(stations))
+            if len(paths) < min_transfers:
+                paths.insert(0, p)
+                reduced_stations.insert(0, s)
+                min_transfers = len(paths)
 
-        path_df = MapService._calculate_shortest_path(paths, reduced_stations)
+            else:
+                paths.append(p)
+                reduced_stations.append(s)
 
-        return path_df
+        shortest_path = MapService._calculate_shortest_path(paths[:100], reduced_stations[:100])
+
+        return shortest_path
 
     @staticmethod
     def _reduce_path(path, stations):
+        """
+        Reduces the path by truncating repeating lines
+        :param path:
+        :param stations:
+        :return:
+        """
+        reduced_paths = []
+        reduced_stations = []
+        for i in range(0, len(path)):
+            # 7X and 6X not supported in schedules db
+            if path[i] == "7X":
+                path[i] = "7"
+            elif path[i] == "6X":
+                path[i] = "6"
+
         reduced_paths = [path[0]]
         reduced_stations = [stations[0]]
         j = 0
@@ -78,33 +121,39 @@ class MapService:
                 j += 1
         reduced_stations.append(stations[-1])
 
+
+
         return reduced_paths, reduced_stations
 
     @staticmethod
-    def _calculate_shortest_path(paths, reduced_stations):
+    def _calculate_shortest_path(paths, reduced_stations) -> List[TrainLine]:
+        """
+        Uses the schedules to determine which unweighted path is fastest.
+        :param paths: list of paths
+        :param reduced_stations: list of stations for those paths
+        :return: list of TrainLine objects describing the shortest path
+        """
         schedule_service = ScheduleService()
-
         fastest_path = paths[0]
         fastest_time_taken = timedelta(minutes=100000)
         fastest_path_times = []
+        fastest_stations = []
         transfers = 1000
-        # start_time = datetime.now().replace(year=1900,  month=1, day=1)
-        start_time = datetime(year=1900, month=1, day=1, hour=12, minute=22)
+
+        visited_paths = {}
+
+        start_time = datetime.now().replace(year=1900,  month=1, day=1, hour=13, minute=48)
 
         for path, stations in zip(paths, reduced_stations):
             evaluate = True
             time = start_time
             path_times = []
             for i in range(0, len(path)):
-                cur_start_station = stations[i]
-                cur_end_station = stations[i + 1]
 
-                # Fix path: temporary fix until we deal with express pathing later
+                cur_start_station = stations[i]
+                cur_end_station = stations[i+1]
                 curr_path = path[i]
-                if path[i] == "7X":
-                    curr_path = "7"
-                elif path[i] == "6X":
-                    curr_path = "6"
+
 
                 # Get the schedule with the desired departure and arrival time
                 try:
@@ -116,32 +165,42 @@ class MapService:
                     evaluate = False
                     break
                 if len(sched) == 0:
-                    print("ERROR: Couldn't Resolve the current path --> {}".format(path))
                     evaluate = False
                     break
 
-                departure_time = sched['Schedule'][cur_start_station.station_name]
-                arrival_time = sched['Schedule'][cur_end_station.station_name]
+
+                departure_time = sched['Schedule'][cur_start_station.schedule_key()]
+                arrival_time = sched['Schedule'][cur_end_station.schedule_key()]
                 path_times.append([departure_time, arrival_time])
                 time = arrival_time.replace(day=1)
 
+            # Path was not succesfully evaluated. continue
+            # if len(path_times) < len(path):
+            #     continue
+
+
             # If it takes less time, make that path the fastest path
-            if path_times[-1][1] - path_times[0][0] < fastest_time_taken and evaluate:
+            if evaluate and path_times[-1][1] - path_times[0][0] < fastest_time_taken:
                 fastest_path = path
                 fastest_path_times = path_times
                 fastest_stations = stations
+                fastest_time_taken = path_times[-1][1] - path_times[0][0]
                 transfers = len(stations)
             # if it takes the same amount of time, choose the path that has the least number of transfers
-            elif path_times[-1][1] - path_times[0][0] == fastest_time_taken and len(stations) < transfers and evaluate:
+            elif evaluate and path_times[-1][1] - path_times[0][0] == fastest_time_taken and len(stations) < transfers:
                 fastest_path = path
                 fastest_path_times = path_times
                 fastest_stations = stations
                 transfers = len(stations)
 
+        if len(fastest_stations) == 0:
+            return None, None
+
+
         train_lines = []
-        for i in range(0, len(stations) - 1):
+        for i in range(0, len(fastest_stations)-1):
             train_line = TrainLine(start=fastest_stations[i],
-                                   stop=fastest_stations[i + 1],
+                                   stop=fastest_stations[i+1],
                                    line=fastest_path[i],
                                    departure_time=fastest_path_times[i][0].strftime("%H:%M"),
                                    arrival_time=fastest_path_times[i][1].strftime("%H:%M"))
@@ -149,25 +208,31 @@ class MapService:
 
         return train_lines, fastest_path_times
 
-    def get_station_by_station_name(self,
-                                    station_name: str):
-
-        result = self.repository.get_station_by_station_name(station_name)
-        return [SubwayStation.from_node(record['s']) for record in result][0]
-
-    def get_all_stations(self):
+    def get_all_stations(self) -> List[SubwayStation]:
+        """
+        Gets all of the nodes in the graph and converts them to SubwayStation objects
+        :return: List[SubwayStation]
+        """
         result = self.repository.all_stations()
         result = [SubwayStation.from_node(record['s']) for record in result]
         return result
 
-    def get_all_active_stations(self):
+    def get_all_active_stations(self) -> List[SubwayStation]:
+        """
+        Gets all of the SubwayStation nodes in the graph whose status is "normal".
+        :return: List[SubwayStation]
+        """
         result = self.repository.get_all_active_stations()
         result = [SubwayStation.from_node(record['s']) for record in result]
         return result
 
     def get_stations_by_line(self,
-                             line: str):
-
+                             line: str) -> List[SubwayStation]:
+        """
+        Gets all of the stations, in order, for the given line
+        :param line: the line
+        :return: List[SubwayStation]
+        """
         result = self.repository.get_stations_by_line(line)
         start = []
         stop = []
@@ -221,8 +286,6 @@ class MapService:
                                     start.append(prev_rerouted_station)
                                 else:
                                     start.append(SubwayStation.from_node(record['nodes'][0]))
-                                    print('err')
-                                    print(SubwayStation.from_node(record['nodes'][0]))
 
                             elif j == 0:
                                 start.append(SubwayStation.from_node(record['nodes'][0]))
@@ -271,37 +334,46 @@ class MapService:
             ordered_stations.append(prev_station)
             i += 1
 
-        # Append final station
-        # stop_station = None
-        # for station in stop:
-        #     if station not in start:
-        #         stop_station = station
-        # ordered_stations.append(stop_station)
-
         return ordered_stations
 
     def get_connections_between_stations(self,
                                          station_1: SubwayStation,
                                          station_2: SubwayStation):
-
+        """
+        Gets all of the connections between two SubwayStation nodes
+        :param station_1: SubwayStation object
+        :param station_2: SubwayStation object
+        :return: list containing the starting nodes, ending nodes, and relationships between the two stations
+        """
         result = self.repository.get_connections_between_stations(station_1, station_2)
         return result
 
-    def get_station_by_name_and_entrance(self, station_name, entrance):
+    def get_station_by_name_and_entrance(self, station_name: str, entrance: str) -> SubwayStation:
+        """
+        Gets the SubwayStation node corresponding to the given name and entrance
+        :param station_name: the station's name
+        :param entrance: the entrance
+        :return: SubwayStation object
+        """
         result = self.repository.get_station_by_name_and_entrance(station_name, entrance)
         node = result['s']
         subway_station = SubwayStation.from_node(node=node)
         return subway_station
 
     def get_distinct_lines(self):
+        """
+        Gets a list of the unique lines in the graph
+        :return:
+        """
         return self.repository.get_distinct_lines()
 
     def set_station_status_out_of_order(self,
                                         station: SubwayStation):
         """
-        TODO: Add support for when the station being set out of order is the last on the line
-        :param station:
-        :return:
+        Sets the given SubwayStation node's status to "out of order" and detachs it from the graph.
+        Creates REROUTES relationships between the connecting SubwayStations to go around the given station.
+        :param station: SubwayStation object
+        :return: None
         """
 
         # Get all connections for the given station and reroute them as necessary
@@ -324,7 +396,6 @@ class MapService:
             for record in records_for_line:
                 start = SubwayStation.from_node(record['start'])
                 end = SubwayStation.from_node(record['end'])
-
                 # Check if the relationship is a REROUTE
                 if record['reroute'] is not None:
                     # Check if the station is the start or ending node of the reroute.
@@ -360,30 +431,26 @@ class MapService:
                             reroute = reroute + record['reroute']
                         elif station.station_name == end.station_name:
                             reroute = record['reroute'] + reroute
-
                 # Set the end_node and start_node based on where the SubwayStation station appears in the relationship
                 if start == station:
                     end_node = end
                 elif end == station:
                     start_node = start
-                else:
-                    print('ERROR: set_station_status_out_of_order -> given station is neither starting nor ending '
-                          'node')
 
             # CASE: End of the line
             train_line = TrainLine()
             if start_node is None or end_node is None:
                 if end_node is not None:
                     train_line = TrainLine(start=end_node, stop=end_node, line=line)
-                    if reroute is not None:
+                    if reroute is not None and len(reroute[0].split("?")) == 2:
                         reroute[0] = reroute[0] + "?start"
-                    else:
+                    elif reroute is None:
                         reroute = [station.reroute() + "?start"]
                 elif start_node is not None:
                     train_line = TrainLine(start=start_node, stop=start_node, line=line)
-                    if reroute is not None:
+                    if reroute is not None and len(reroute[-1].split("?")) == 2:
                         reroute[-1] = reroute[-1] + "?end"
-                    else:
+                    elif reroute is None:
                         reroute = [station.reroute() + "?end"]
             elif start_node == end_node:
                 continue
@@ -395,9 +462,6 @@ class MapService:
             else:
                 train_line = TrainLine(start=start_node, stop=end_node, line=line)
 
-
-            print(reroute)
-
             # If the reroute is not None, then we know that we are rerouting a REROUTES relationship.
             if reroute is not None:
                 self.repository.create_reroute(train_line=train_line, reroute=reroute)
@@ -406,54 +470,66 @@ class MapService:
             else:
                 self.repository.create_reroute(train_line=train_line, reroute=[station.reroute()])
 
-            # Creating a reroute for a starting or ending node
-            # else:
-                # Node is at the start of the line
-                # if start_node is None:
-                #     self.repository.create_reroute(train_line=train_line, reroute=[station.reroute() + "?start"])
-                # Node is at the end of the line
-                # else:
-                #     self.repository.create_reroute(train_line=train_line, reroute=[station.reroute() + "?end"])
 
-        return True
+    def _get_all_reroutes_and_extras(self, station):
+        """
+        Gets all of the REROUTES relationships corresponding to the given SubwayStation
+        :param station: SubwayStation object
+        :return: list of reroutes, and a list of markers that are included if the SubwayStation is the first or last
+        on a given line
+        """
+        normal_reroutes = self.repository.get_reroutes(station.reroute())
+        start_reroutes = self.repository.get_reroutes(station.reroute()+"?start")
+        end_reroutes = self.repository.get_reroutes(station.reroute()+"?end")
+
+
+        extras = []
+        for reroute in normal_reroutes:
+            extras.append("")
+        for reroute in start_reroutes:
+            extras.append("?start")
+            # if reroute[-5:] == "start":
+        for reroute in end_reroutes:
+            extras.append("?end")
+
+        reroutes = normal_reroutes + start_reroutes + end_reroutes
+        return reroutes, extras
 
     def set_station_status_normal(self,
                                   station: SubwayStation):
         '''
-        TODO: Deal with the case where the station is at the end of a line
+        Sets a SubwayStation's status to "normal". Removes all of the REROUTES relationships for the given SubwayStation
+        and reconnects it to the grpah. If the given REROUTES relationship spans multiple SubwayStations, new REROUTES
+         must be created as well.
         :param station:
         :return:
         '''
 
         # Get all reroutes associated with the given station
-
-        reroutes = self.repository.get_reroutes(station.reroute())
-        extra = ""
-        if len(reroutes) == 0:
-            extra = "?start"
-            reroutes = self.repository.get_reroutes(station.reroute() + extra)
-        if len(reroutes) == 0:
-            extra = "?end"
-            reroutes = self.repository.get_reroutes(station.reroute() + extra)
+        reroutes, extras = self._get_all_reroutes_and_extras(station)
 
         # Remove all reroutes and set the station status to "Normal"
-        self.repository.remove_reroute(station.reroute() + extra)
-
         # Iterate through reroutes and restore them to the given station
-        for r in reroutes:
+        for r, extra in zip(reroutes, extras):
+            self.repository.remove_reroute(station.reroute() + extra)
             # The line for the given REROUTES relationship
             line = r['line']
             # The station_names for the given REROUTES relationship
             rerouted_stations = r['reroute']
 
             # Index of station in the reroute array for a given REROUTES relationship
-
             station_index = rerouted_stations.index(station.reroute() + extra)
 
             start = SubwayStation.from_node(r['start'])
             end = SubwayStation.from_node(r['end'])
 
-            if extra == "":
+            if extra == "" and rerouted_stations[station_index-1].split("?")[-1] == "start":
+                line_in = TrainLine(start=station, stop=station, line=line)
+                line_out = TrainLine(start=station, stop=end, line=line)
+            elif extra == "" and rerouted_stations[station_index-1].split("?")[-1] == "end":
+                line_in = TrainLine(start=start, stop=station, line=line)
+                line_out = TrainLine(start=station, stop=station, line=line)
+            elif extra == "":
                 # Create the TrainLine objects going into and out of the reintroduced SubwayStation
                 line_in = TrainLine(start=start, stop=station, line=line)
                 line_out = TrainLine(start=station, stop=end, line=line)
@@ -464,11 +540,14 @@ class MapService:
                 line_in = TrainLine(start=start, stop=station, line=line)
                 line_out = None
 
+
+
+
+
             # The given station is the only one being rerouted by the given REROUTES relationship
             if len(rerouted_stations) == 1:
                 self.repository.create_connection(line_in)
                 self.repository.create_connection(line_out)
-
 
 
             # The given REROUTES relationship has multiple SubwayStation's that it is rerouting
@@ -490,7 +569,6 @@ class MapService:
                     self.repository.create_reroute(train_line=line_out,
                                                    reroute=rerouted_stations[station_index + 1:])
 
-        return True
 
 
 class ScheduleService:
@@ -499,7 +577,12 @@ class ScheduleService:
         self.repository = ScheduleRepository()
 
     def get_schedules_by_line(self,
-                              line: str):
+                              line: str) -> List[Schedule]:
+        """
+        Gets all of the Schedules for the given line
+        :param line: the line
+        :return: List[Schedule]
+        """
         result = self.repository.get_schedules_by_line(line)
         array = []
 
@@ -508,36 +591,76 @@ class ScheduleService:
 
         return array
 
-    def get_next_train_by_station_name_and_line(self, start_station, end_station, line, time):
-        result = self.repository.get_next_train_by_station_name_and_line(start_station.station_name,
-                                                                         end_station.station_name,
+    def get_next_train_by_station_name_and_line(self,
+                                                start_station: SubwayStation,
+                                                end_station: SubwayStation,
+                                                line: str,
+                                                time: datetime) -> Schedule:
+        """
+        Getes the next train for going from start_station to end_station on the given line, after the time specified
+        :param start_station: the starting SubwayStation
+        :param end_station: the ending SubwayStation
+        :param line: the line
+        :param time: the minimum time
+        :return: Schedule
+        """
+        result = self.repository.get_next_train_by_station_name_and_line(start_station.schedule_key(),
+                                                                         end_station.schedule_key(),
                                                                          line,
                                                                          time)
         result = [res for res in result][0]
         return result
 
     def delay_train(self, schedule: Schedule, station_name: str, delay: timedelta):
+        """
+        Delays the specified schedule by the provided delay starting at station_name. If a delay already exists,
+        remove that delay first.
+        :param schedule: the Schedule object
+        :param station_name: the name of the starting station
+        :param delay: the delay amount
+        :return:
+        """
         if schedule.delay is not None:
             new_sched = self.remove_delay(schedule=schedule)
-            print(new_sched)
             schedule = Schedule.from_mongo(new_sched)
         result = self.repository.delay_train(schedule=schedule, station_name=station_name, delay=delay)
         return result
 
-    def get_train_by_line_direction_station_and_start_time(self, line, direction, starting_station, time):
+    def get_train_by_line_direction_station_and_start_time(self,
+                                                           line: str,
+                                                           direction: str,
+                                                           starting_station: str,
+                                                           time: datetime):
+        """
+        Gets the Schedule that starts from the given starting_station at the given time, going in the given direction
+        on the given line
+        :param line: the line
+        :param direction: the direction
+        :param starting_station: the starting station
+        :param time: the time
+        :return:
+        """
         result = self.repository.get_train_by_line_direction_station_and_start_time(line, direction,
                                                                                     starting_station, time)
         return Schedule.from_mongo(result)
 
     def remove_delay(self, schedule: Schedule):
+        """
+        Removes the delay from the given Schedule
+        :param schedule: the Schedule object
+        :return:
+        """
         if schedule.delay is None:
-            print("ERROR: Current train does not have a delay to remove")
             return None
         else:
             result = self.repository.remove_delay(schedule=schedule)
             return result
 
-    def get_delays(self):
+    def get_delays(self) -> pd.DataFrame:
+        """
+        Gets all of the delays on the system
+        :return: pd.DataFrame containing the relevant delay information
+        """
         result = self.repository.get_delays()
         schedules = [x for x in result]
 
@@ -552,19 +675,46 @@ class ScheduleService:
         df = pd.DataFrame(output[1:], columns=output[0]).sort_values(by=["Line", "Time"])
         return df
 
-    def get_schedules_by_line_direction(self, line, direction):
+    def get_schedules_by_line_direction(self, line, direction) -> (List, List):
+        """
+        Gets all of the schedules for Trains going in the given direction on the given line
+        """
         result = self.repository.get_schedules_by_line_direction(line=line, direction=direction)
         results = [x for x in result]
         if len(results) > 0:
             schedules = sorted(results, key=lambda schedule: schedule['Schedule'][min(schedule['Schedule'],
                                                                                       key=schedule["Schedule"].get)])
-            stations = list(schedules[0]["Schedule"].keys())
-            schedules = [[val.strftime("%H:%M") for val in schedule["Schedule"].values()] for schedule in schedules]
-            return stations, schedules
+
+            # Get the schedule with a complete set of stations
+            stations = []
+            for s in schedules:
+                keys = list(s["Schedule"].keys())
+                if len(keys) > len(stations):
+                    stations = keys
+            # stations = list(schedules[0]["Schedule"].keys())
+
+            result = []
+            i = 0
+            for schedule in schedules:
+                result.append([])
+                for key in stations:
+                    if key in schedule["Schedule"]:
+                        result[i].append(schedule["Schedule"][key].strftime("%H:%M"))
+                    else:
+                        result[i].append("--")
+                i += 1
+
+
+            # schedules = [[val.strftime("%H:%M") for val in schedule["Schedule"].values()] for schedule in schedules]
+            return stations, result
         else:
             return None
 
-    def get_unique_line_direction(self):
+    def get_unique_line_direction(self) -> {}:
+        """
+        Gets the unique set of line and directions across the Schedules in the Schedule collection
+        :return: dictionary mapping lines to directions
+        """
         result = self.repository.get_unique_line_direction()
         combinations = [Schedule(line=x['_id']['Line'], direction=x['_id']['Direction']) for x in result]
 
@@ -582,6 +732,11 @@ class UserService:
         self.repository = UserRepository()
 
     def add_user(self, user: User):
+        """
+        Adds a user to the Users table. Hashes and salts their password
+        :param user: the User to add
+        :return: the added User
+        """
         salt = os.urandom(32)
         key = hashlib.pbkdf2_hmac(
             'sha256',  # The hash digest algorithm for HMAC
@@ -599,6 +754,12 @@ class UserService:
             return None
 
     def login_user(self, email, password):
+        """
+        Checks if a user with the given email and password exists.
+        :param email: the email
+        :param password: the password
+        :return: If they exists User, else None
+        """
         user = self.get_user_by_email(email)
         if user is None:
             return None
@@ -619,11 +780,13 @@ class UserService:
         else:
             return None
 
-    def get_user_by_email(self, email):
+    def get_user_by_email(self, email) -> User:
+        """
+        Gets a User with the given email
+        :param email: the email
+        :return: User
+        """
         return self.repository.get_user_by_email(email)
-
-    def add_many_users(self, user_array: []):
-        self.repository.add_many_users(user_array)
 
 
 class TripService:

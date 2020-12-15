@@ -11,45 +11,52 @@ CODES = "https://moovitapp.com/index/en/public_transit-lines-NYCNJ-121-855111"
 SITE = "https://moovitapp.com/index/en/"
 
 
-# def yieldLineLinks():
-#     arr = []
-#     resp = requests.get(CODES)
-#     soup = BeautifulSoup(resp.content, 'html.parser')
-#     with open('html_pages/content.html', 'w', encoding='utf-8') as f:
-#         f.write(str(resp.content))
-#         f.close()
-#     for list_item in soup.find_all("li", {"class": "line-item"}):
-#         a = list_item.find("a")
-#         href = a['href']
-#         line_name = href.split('-')[2]
-#         arr.append([line_name, SITE + href])
-#     return arr
-#
-#
-# def save(name, content):
-#     with open('html_pages/{0}.html'.format(name), 'w', encoding='utf-8') as f:
-#         f.write(str(content))
-#
-#
-# class StationScraper:
-#     def __init__(self, line, url):
-#         self.line = line
-#         self.url = url
-#
-#     def scrape(self):
-#         try:
-#             return requests.get(self.url)
-#         except requests.exceptions.RequestException as e:
-#             print("{}: Couldn't connect to {}".format(e, self.url))
-#             return None
+def yieldLineLinks():
+    arr = []
+    resp = requests.get(CODES)
+    soup = BeautifulSoup(resp.content, 'html.parser')
+    with open('html_pages/content.html', 'w', encoding='utf-8') as f:
+        f.write(str(resp.content))
+        f.close()
+    for list_item in soup.find_all("li", {"class": "line-item"}):
+        a = list_item.find("a")
+        href = a['href']
+        line_name = href.split('-')[2]
+        arr.append([line_name, SITE + href])
+    return arr
+
+
+def save(name, content):
+    with open('html_pages/{0}.html'.format(name), 'w', encoding='utf-8') as f:
+        f.write(str(content))
+
+
+class StationScraper:
+    def __init__(self, line, url):
+        self.line = line
+        self.url = url
+
+    def scrape(self):
+        try:
+            return requests.get(self.url)
+        except requests.exceptions.RequestException as e:
+            print("{}: Couldn't connect to {}".format(e, self.url))
+            return None
 
 
 class Parser:
+    """
+    Class to parse the scraped data for the desired attributes.
+    """
     def __init__(self, content):
         self.content = content
         self.soup = BeautifulSoup(content, 'html.parser')
 
     def get_station_names(self):
+        """
+        Parses the content and gets the name for each station
+        :return: list of station names
+        """
         station_names = []
         for wrapper in self.soup.find_all("div", {"class": "stop-wrapper"}):
             station_name = ' '.join(wrapper.find("h3").text.split(' ')[:-1])
@@ -57,6 +64,10 @@ class Parser:
         return np.array(station_names).T
 
     def get_station_lines(self):
+        """
+        Parses the content and gets the lines for each station
+        :return: list of lines
+        """
         station_lines = []
         for wrapper in self.soup.find_all("div", {"class": "stop-wrapper"}):
             lines = wrapper.find("h3").text.split(' ')[-1][1:-1]
@@ -64,6 +75,10 @@ class Parser:
         return np.array(station_lines).T
 
     def get_station_entrances(self):
+        """
+        Parse the content and gets the locations
+        :return: list of locations
+        """
         station_entrances = []
         for wrapper in self.soup.find_all("div", {"class": "stop-wrapper"}):
             text = wrapper.find("span").text
@@ -74,7 +89,11 @@ class Parser:
             station_entrances.append(entrance)
         return np.array(station_entrances).T
 
-    def get_station_boroughs(self):
+    def get_station_boroughs(self):\
+        """
+        Parses the content and gets the boroughs
+        :return: list of boroughs
+        """
         station_boroughs = []
         for wrapper in self.soup.find_all("div", {"class": "stop-wrapper"}):
             text = wrapper.find("span").text
@@ -87,6 +106,12 @@ class Parser:
 
 
 def get_coordinates(addresses, boroughs):
+    """
+    Tries to get the coordinates for the given stations.
+    :param addresses: the list of location
+    :param boroughs: the list of boroughs
+    :return:
+    """
     latitude = []
     longitude = []
     for address, borough in zip(addresses, boroughs):
@@ -101,7 +126,15 @@ def get_coordinates(addresses, boroughs):
     return np.array(latitude).T, np.array(longitude).T
 
 
-def fix_exceptions(stations, addresses, lines):
+def fix_map_exceptions(stations, addresses, lines):
+    """
+    Fixes errors in the stations, locations, and lines that were scraped. Necessary to ensure that duplicates are not
+    created. Also ensures that stations can be properly referenced to the Schedule collection
+    :param stations: the list of stations
+    :param addresses: the list of locations
+    :param lines: the list of lines
+    :return:
+    """
     for i in range(0, len(stations)):
         station = stations[i]
         address = addresses[i]
@@ -135,8 +168,6 @@ def fix_exceptions(stations, addresses, lines):
             lines[i] = "2,5"
         if station == "Jay St - Metrotech":
             lines[i] = "A,C,F,N,Q,R"
-        if address == "5213 4 Ave" and station == "45 St":
-            lines[i] = "N,R"
         if station == "Court St":
             lines[i] = "N,Q,R"
         if station == "Rector St" and address == "33 Trinity Place":
@@ -147,8 +178,6 @@ def fix_exceptions(stations, addresses, lines):
             lines[i] = "N,Q,R,W"
         if station == "45 St":
             lines[i] == "N,R"
-        # if station == "New Lots Av":
-            # lines[i] = ""
 
 
     return stations, addresses, lines
@@ -162,6 +191,9 @@ if __name__ == "__main__":
     columns = ['station_name', 'borough', 'entrance', 'lines', 'latitude', 'longitude']
     output = pd.DataFrame(columns=columns)
 
+    if not os.path.exists("data"):
+        os.makedirs("data")
+
     for page in pages:
         with open(page, 'r') as f:
             content = f.read()
@@ -170,7 +202,7 @@ if __name__ == "__main__":
         lines = parser.get_station_lines()
         entrances = parser.get_station_entrances()
         boroughs = parser.get_station_boroughs()
-        stations, entrances, lines = fix_exceptions(stations, entrances, lines)
+        stations, entrances, lines = fix_map_exceptions(stations, entrances, lines)
         latitude, longitude = get_coordinates(addresses=entrances, boroughs=boroughs)
         csv = pd.DataFrame(np.column_stack((stations, boroughs, entrances, lines, latitude, longitude)),
                            columns=columns)

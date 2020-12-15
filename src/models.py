@@ -191,16 +191,10 @@ class SubwayStation:
             longitude=row['longitude']
         )
 
-    def to_dict(self):
-        return {
-            "station_name": self.station_name,
-            "borough": self.borough,
-            "entrances": self.entrances,
-            "lines": self.lines,
-            "status": self.status,
-            "latitude": self.latitude,
-            "longitude": self.longitude
-        }
+
+    def schedule_key(self):
+        return "{} [{}]".format(self.station_name, ','.join(sorted(self.lines)))
+
 
     def __eq__(self, other: SubwayStation) -> bool:
         '''
