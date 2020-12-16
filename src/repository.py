@@ -596,6 +596,11 @@ class ScheduleRepository:
         :return: the updated Schedule
         """
 
+        # { $unwind: '$foobars'},
+        # { $group: {_id: null, maxTime: { $max: '$foobars.time'}}},
+        # callback);
+
+
         update = \
             {
                 "$set": {
@@ -604,6 +609,7 @@ class ScheduleRepository:
                 "$unset": {"Delay": ""}  # Remove delay property
             }
         start = schedule.delay['start']
+        print(start)
         delay = schedule.delay['time']
         for stop in schedule.schedule:
             if schedule.schedule[start] < schedule.schedule[stop]:

@@ -141,7 +141,9 @@ class MapService:
 
         visited_paths = {}
 
-        start_time = datetime(year=1900,  month=1, day=1, hour=13, minute=48, second=0)
+        # start_time = datetime(year=1900,  month=1, day=1, hour=13, minute=48, second=0)
+
+        start_time = datetime.now().replace(year=1900, month=1, day=1)
 
         for path, stations in zip(paths, reduced_stations):
             evaluate = True
@@ -681,14 +683,16 @@ class ScheduleService:
         result = self.repository.get_delays()
         schedules = [x for x in result]
 
-        output = [["Line", "Direction", "Time", "Starting Station", "Delay"]]
+        output = [["Line", "Direction", "Time", "Starting Station", "Starting Station for Line", "Delay"]]
         for schedule in schedules:
             line = schedule["Line"]
             direction = schedule["Direction"]
             starting_station = schedule["Delay"]["start"]
+            start_station_for_line = list(schedule["Schedule"].keys())[0]
+            print(start_station_for_line)
             delay = schedule["Delay"]["time"]
             time = schedule["Schedule"][list(schedule["Schedule"].keys())[0]].strftime("%H:%M")
-            output.append([line, direction, time, starting_station, delay])
+            output.append([line, direction, time, starting_station, start_station_for_line, delay])
         df = pd.DataFrame(output[1:], columns=output[0]).sort_values(by=["Line", "Time"])
         return df
 

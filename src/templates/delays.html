@@ -29,7 +29,8 @@
                     <td>{{ row['Delay'] }}</td>
                     {% if is_admin %}
                     <td>
-                        <a href="{{ 'remove-delay/%s/%s/%s/%s' % (row['Line'], row['Direction'], row['Time'], row['Starting Station']) }}"
+                        <a href="{{ 'remove-delay/%s/%s/%s/%s' % (row['Line'], row['Direction'], row['Time'],
+                        row['Starting Station for Line']) }}"
                         action="GET">
                             Remove Delay
                         </a>

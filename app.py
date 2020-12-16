@@ -165,6 +165,7 @@ def delay_train():
         direction = form["direction"]
         line = form["line"]
 
+
         schedule = schedule_service.get_train_by_line_direction_station_and_start_time(line, direction,
                                                                                        starting_station, time)
         schedule_service.delay_train(schedule, station_name, timedelta(minutes=int(delay)))
@@ -180,6 +181,7 @@ def remove_delay(line, direction, time, starting_station):
         return redirect(url_for("lines"))
     else:
         time = datetime.strptime(time, "%H:%M")
+
 
         # Get the schedule with the delay
         schedule = schedule_service.get_train_by_line_direction_station_and_start_time(line=line,
